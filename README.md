@@ -46,31 +46,31 @@ docker-compose up -d
 
 **创建数据库**
 
-![image-20220510152355712](doc/image/image-20220510152355712.png)
+![image-20220510152355712](resource/image/image-20220510152355712.png)
 
-![image-20220510152459502](doc/image/image-20220510152459502.png)
+![image-20220510152459502](resource/image/image-20220510152459502.png)
 
 **生成文档**
 
-![image-20220510152639302](doc/image/image-20220510152639302.png)
+![image-20220510152639302](resource/image/image-20220510152639302.png)
 
 **赋予对应角色所拥有的数据库**
 
-![image-20220510152811067](doc/image/image-20220510152811067.png)
+![image-20220510152811067](resource/image/image-20220510152811067.png)
 
 **赋予test用户一个普通角色**
 
-![image-20220510152843106](doc/image/image-20220510152843106.png)
+![image-20220510152843106](resource/image/image-20220510152843106.png)
 
 #### **普通角色**
 
 **注册用户并登录**
 
-![image-20220510153502229](doc/image/image-20220510153502229.png)
+![image-20220510153502229](resource/image/image-20220510153502229.png)
 
-![image-20220510153208502](doc/image/image-20220510153208502.png)
+![image-20220510153208502](resource/image/image-20220510153208502.png)
 
-![image-20220510153425040](doc/image/image-20220510153425040.png)
+![image-20220510153425040](resource/image/image-20220510153425040.png)
 
 ### 访问地址
 
