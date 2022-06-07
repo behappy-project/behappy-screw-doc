@@ -72,6 +72,10 @@ docker-compose up -d
 
 ![image-20220510153425040](doc/image/image-20220510153425040.png)
 
+### 访问地址
+
+[访问地址](http://192.168.56.103:8999/screw-doc/index.html)
+
 - [X]  mysql文档管理
 - [X]  角色划分
 - [ ]  clickhouse文档管理
