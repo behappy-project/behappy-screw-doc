@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaowu.behappy.screw.mapper.UserMapper">
+
+    <resultMap id="pageUser" type="org.xiaowu.behappy.screw.entity.User">
+        <result column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="address" property="address" />
+        <result column="create_time" property="createTime" />
+        <result column="avatar_url" property="avatarUrl" />
+        <result column="role" property="role" />
+    </resultMap>
+
+    <select id="findPage" resultMap="pageUser">
+        select sys_user.* from sys_user
+        <where>
+            <if test="username != null and username != ''">
+                and sys_user.username like concat('%', #{username} ,'%')
+            </if>
+            <if test="email != null and email != ''">
+                and sys_user.email like concat('%', #{email} ,'%')
+            </if>
+            <if test="address != null and address != ''">
+                and sys_user.address like concat('%', #{address} ,'%')
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

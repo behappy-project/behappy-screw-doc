@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaowu.behappy.screw.mapper.DatabaseMapper">
+
+    <resultMap id="database" type="org.xiaowu.behappy.screw.entity.Database">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="icon" property="icon" />
+        <result column="description" property="description" />
+        <result column="pid" property="pid" />
+        <result column="sortNum" property="sortNum" />
+    </resultMap>
+
+    <select id="pageDatabase" resultMap="database">
+        select sd.*
+        from (select child.id, child.name, child.icon, child.description
+              from sys_database child
+                       join
+                   (select sd.id
+                    from sys_database sd
+                    where pid is null
+                      <if test="datasource != null and datasource != ''">
+                          and name = #{datasource}
+                      </if>
+                     ) parent
+                   on child.pid = parent.id) sd
+                 join sys_role_database srd on sd.id = srd.database_id
+                 join sys_role sr on srd.role_id = sr.id
+        <where>
+            <if test="flag != null and flag != ''">
+                and sr.flag = #{flag}
+            </if>
+            <if test="name != null and name != ''">
+                and sd.name = #{name}
+            </if>
+        </where>
+    </select>
+</mapper>

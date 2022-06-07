@@ -1,0 +1,12 @@
+version: '3'
+services:
+  behappy-screw-doc:
+    restart: 'no'
+    privileged: true
+    container_name: behappy-screw-doc
+    image: wangxiaowu950330/behappy-screw-doc:latest
+    ports:
+      - "8999:8080"
+    volumes:
+      - /opt/dbdoc/doc:/user/src/app/doc
+      - /opt/dbdoc/application.yml:/user/src/app/application.yml

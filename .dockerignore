@@ -1,0 +1,13 @@
+image
+README.md
+docker-compose.yml
+buildDockerImage.sh
+.git
+.idea
+.mvn
+.dockerignore
+.gitignore
+HELP.md
+mvnw
+mvnw.cmd
+*.iml
