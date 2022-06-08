@@ -70,11 +70,11 @@ docker-compose up -d
 
 ![image-20220510153208502](resources/image/image-20220510153208502.png)
 
-![image-20220510153425040](resources/image/image-20220510153425040.png)
+![image-20220510153425040](resources/image/image-20220510153425041.png)
 
 ### 访问地址
 
-[访问地址](http://192.168.56.103:8999/screw-doc/index.html)
+[访问地址](http://xxx:8999/screw-doc/index.html)
 
 - [X]  mysql文档管理
 - [X]  角色划分
