@@ -78,13 +78,17 @@ docker-compose up -d
 
 - [X]  mysql文档管理
 - [X]  角色划分
-- [ ]  clickhouse文档管理
+- [X]  clickhouse文档管理
 - [X]  redis缓存(适用在分布式环境部署)和caffeine进程缓存(适用在单机)两种方式
 - [X]  容器化
 - [X]  以/doc开头的访问地址解析token,并判断当前角色是否允许访问
 
-### 注: 当前项目支持两种数据库, mysql和clickhouse, 但clickhouse因为screw原作者还未合代码, 所以如果是需要本地开发的话, 需要手动在lib文件夹下执行下此命令将jar包安装到本地库
+### 注: 当前项目支持两种数据库, mysql和clickhouse, 但clickhouse因为screw原作者还未合代码, 所以如果是需要本地开发的话, 需要手动执行下此命令将jar包安装到本地库
 
 ```xml
-mvn install:install-file -Dfile="./screw-core-1.0.6-SNAPSHOT.jar" -DgroupId=cn.smallbun.screw -DartifactId=screw-core -Dversion=1.0.6-SNAPSHOT -Dpackaging=jar
+参考: https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
+
+mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-1.0.6-SNAPSHOT.pom"
+cp lib/screw-core-1.0.6-SNAPSHOT.pom ~/.m2/repository/cn/smallbun/screw/screw/1.0.6-SNAPSHOT/screw-1.0.6-SNAPSHOT.pom
+mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-core-1.0.6-SNAPSHOT.pom"
 ```

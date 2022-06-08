@@ -6,7 +6,9 @@ RUN sh buildProject.sh
 COPY . .
 # 1.执行构建vue,2.执行构建maven
 RUN source /etc/profile \
-    && mvn install:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DgroupId=cn.smallbun.screw -DartifactId=screw-core -Dversion=1.0.6-SNAPSHOT -Dpackaging=jar \
+    && mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-1.0.6-SNAPSHOT.pom" \
+    && cp lib/screw-1.0.6-SNAPSHOT.pom ~/.m2/repository/cn/smallbun/screw/screw/1.0.6-SNAPSHOT/screw-1.0.6-SNAPSHOT.pom \
+    && mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-core-1.0.6-SNAPSHOT.pom" \
     && cd vue \
     && npm i --registry=http://registry.npm.taobao.org/ \
     && npm run build \

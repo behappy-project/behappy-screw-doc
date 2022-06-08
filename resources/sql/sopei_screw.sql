@@ -1,5 +1,5 @@
-create database if not exists sopei_screw;
-use sopei_screw;
+create database if not exists screw_doc;
+use screw_doc;
 /*建表*/
 -- auto-generated definition
 create table sys_database
@@ -64,17 +64,17 @@ create table sys_user
     collate = utf8mb4_unicode_ci;
 
 /*插入数据*/
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('user', 'el-icon-user', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('house', 'el-icon-house', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('menu', 'el-icon-menu', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('s-custom', 'el-icon-s-custom', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('s-grid', 'el-icon-s-grid', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('document', 'el-icon-document', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('coffee', 'el-icon-coffee
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('user', 'el-icon-user', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('house', 'el-icon-house', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('menu', 'el-icon-menu', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-custom', 'el-icon-s-custom', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-grid', 'el-icon-s-grid', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('document', 'el-icon-document', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('coffee', 'el-icon-coffee
 ', 'icon');
-INSERT INTO sopei_screw.sys_dict (name, value, type) VALUES ('s-marketing', 'el-icon-s-marketing', 'icon');
+INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-marketing', 'el-icon-s-marketing', 'icon');
 
-INSERT INTO sopei_screw.sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
-INSERT INTO sopei_screw.sys_role (id, name, description, flag) VALUES (2, '普通角色', '普通角色', 'ROLE_USER');
+INSERT INTO screw_doc.sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
+INSERT INTO screw_doc.sys_role (id, name, description, flag) VALUES (2, '普通角色', '普通角色', 'ROLE_USER');
 
-INSERT INTO sopei_screw.sys_user (id, username, password, nickname, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', 'admin', '小五123', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);
+INSERT INTO screw_doc.sys_user (id, username, password, nickname, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', 'admin', '小五', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);
