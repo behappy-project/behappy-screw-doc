@@ -2,30 +2,29 @@ screw:
   # 多数据源配置, key配置查看DataSourceEnum
   datasource:
     mysql:
-      username: xxx
-      password: xxx
-      ip: xxx
-      port: 61148
+      username: ${DATASOURCE_MYSQL_USERNAME:root}
+      password: ${DATASOURCE_MYSQL_PASSWORD:root}
+      ip: ${DATASOURCE_MYSQL_IP:127.0.0.1}
+      port: ${DATASOURCE_MYSQL_PORT:3306}
       driver-class-name: com.mysql.cj.jdbc.Driver
     click_house:
-      username: xxx
-      password: xxx
-      ip: xxx
-      port: 9226
+      username: ${DATASOURCE_CH_USERNAME:admin}
+      password: ${DATASOURCE_CH_PASSWORD:admin}
+      ip: ${DATASOURCE_CH_IP:127.0.0.1}
+      port: ${DATASOURCE_CH_PORT:9000}
       driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
 spring:
   # 如果需要使用redis,将此处注释打开
-#  redis:
-#    host: 139.199.65.191
-#    port: 6666
-#    password: J*#36@us.tin
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
   cache:
-#    type: redis
-    type: caffeine
+    type: ${CACHE_TYPE:caffeine}
   datasource:
-    url: jdbc:mysql://xxx:xxx/sopei_screw?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: xxx
-    password: xxx
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/screw_doc?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
 mybatis-plus:

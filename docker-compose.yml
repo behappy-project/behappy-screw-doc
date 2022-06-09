@@ -5,6 +5,23 @@ services:
     privileged: true
     container_name: behappy-screw-doc
     image: wangxiaowu950330/behappy-screw-doc:latest
+    environment:
+      DATASOURCE_MYSQL_USERNAME: root
+      DATASOURCE_MYSQL_PASSWORD: root
+      DATASOURCE_MYSQL_IP: 127.0.0.1
+      DATASOURCE_MYSQL_PORT: 3306
+      DATASOURCE_CH_USERNAME: admin
+      DATASOURCE_CH_PASSWORD: admin
+      DATASOURCE_CH_IP: 127.0.0.1
+      DATASOURCE_CH_PORT: 9000
+      CACHE_TYPE: caffeine
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 9000
+      REDIS_PASSWORD: redis
+      MYSQL_HOST: 127.0.0.1
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
     ports:
       - "8999:8080"
     volumes:
