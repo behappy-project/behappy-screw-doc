@@ -31,4 +31,3 @@ services:
       - "8999:8080"
     volumes:
       - /opt/dbdoc/doc:/user/src/app/doc
-      - /opt/dbdoc/application.yml:/user/src/app/application.yml
