@@ -18,55 +18,17 @@
 
 ### 部署方式
 
-1. 需要一个数据库,并执行doc文件夹下的sql
-2. 自定义配置文件application.yml
-```
-screw:
-  # 多数据源配置, key配置查看DataSourceEnum
-  datasource:
-    mysql:
-      username: xxx
-      password: xxx
-      ip: xxx
-      port: 61148
-      driver-class-name: com.mysql.cj.jdbc.Driver
-    click_house:
-      username: xxx
-      password: xxx
-      ip: xxx
-      port: 9226
-      driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
-spring:
-  # 如果需要使用redis,将此处注释打开
-#  redis:
-#    host: 139.199.65.191
-#    port: 6666
-#    password: J*#36@us.tin
-  cache:
-#    type: redis
-    type: caffeine
-  datasource:
-    url: jdbc:mysql://xxx:xxx/sopei_screw?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: xxx
-    password: xxx
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.zaxxer.hikari.HikariDataSource
-mybatis-plus:
-  global-config:
-    banner: false
-  type-aliases-package: org.xiaowu.behappy.screw.entity
-  mapper-locations: classpath:mapper/*.xml
-```
-3. Docker-compose部署, 可以直接使用docker-compose文件部署
+- 需要一个数据库,并执行doc文件夹下的sql
+- Docker-compose部署, 可以直接使用docker-compose文件部署(先修改环境变量)
 
 ```
 docker-compose up -d
 ```
 
-3. Docker部署
+- Docker部署
 
 ```
-# docker run -d --name behappy-screw-doc --privileged=true --restart=no -p 8999:8080 -v /opt/dbdoc/application.yml:/user/src/app/application.yml -v /opt/dbdoc/doc:/user/src/app/doc wangxiaowu950330/behappy-screw-doc:latest
+# docker run -d --name behappy-screw-doc --privileged=true --restart=no -p 8999:8080 -v /opt/dbdoc/doc:/user/src/app/doc wangxiaowu950330/behappy-screw-doc:latest
 ```
 
 ### 使用方式
