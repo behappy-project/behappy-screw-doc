@@ -19,7 +19,45 @@
 ### 部署方式
 
 1. 需要一个数据库,并执行doc文件夹下的sql
-2. Docker-compose部署, 可以直接使用docker-compose文件部署
+2. 自定义配置文件application.yml
+```
+screw:
+  # 多数据源配置, key配置查看DataSourceEnum
+  datasource:
+    mysql:
+      username: xxx
+      password: xxx
+      ip: xxx
+      port: 61148
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    click_house:
+      username: xxx
+      password: xxx
+      ip: xxx
+      port: 9226
+      driver-class-name: ru.yandex.clickhouse.ClickHouseDriver
+spring:
+  # 如果需要使用redis,将此处注释打开
+#  redis:
+#    host: 139.199.65.191
+#    port: 6666
+#    password: J*#36@us.tin
+  cache:
+#    type: redis
+    type: caffeine
+  datasource:
+    url: jdbc:mysql://xxx:xxx/sopei_screw?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: xxx
+    password: xxx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+mybatis-plus:
+  global-config:
+    banner: false
+  type-aliases-package: org.xiaowu.behappy.screw.entity
+  mapper-locations: classpath:mapper/*.xml
+```
+3. Docker-compose部署, 可以直接使用docker-compose文件部署
 
 ```
 docker-compose up -d
@@ -70,11 +108,11 @@ docker-compose up -d
 
 ![image-20220510153208502](resources/image/image-20220510153208502.png)
 
-![image-20220510153425040](resources/image/image-20220510153425040.png)
+![image-20220510153425040](resources/image/image-20220510153425041.png)
 
 ### 访问地址
 
-[访问地址](http://192.168.56.103:8999/screw-doc/index.html)
+[访问地址](http://xxx:8999/screw-doc/index.html)
 
 - [X]  mysql文档管理
 - [X]  角色划分
