@@ -72,6 +72,10 @@ docker-compose up -d
 
 ![image-20220510153425040](resources/image/image-20220510153425041.png)
 
+### 历史回溯功能
+
+![image.png](resources/image/111.png)
+
 ### 访问地址
 
 [访问地址](http://xxx:8999/screw-doc/index.html)
@@ -82,6 +86,7 @@ docker-compose up -d
 - [X]  redis缓存(适用在分布式环境部署)和caffeine进程缓存(适用在单机)两种方式
 - [X]  容器化
 - [X]  以/doc开头的访问地址解析token,并判断当前角色是否允许访问
+- [X]  数据更改后,可进行历史回溯
 
 ### 注: 当前项目支持两种数据库, mysql和clickhouse, 但clickhouse因为screw原作者还未合代码, 所以如果是需要本地开发的话, 需要手动执行下此命令将jar包安装到本地库
 
