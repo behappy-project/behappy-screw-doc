@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-# 仓库地址
-REGISTRY_ADDRESS="docker.io"
-# 仓库账户名
-REGISTRY_USERNAME=wangxiaowu950330
-# 仓库密码
-REGISTRY_PASSWORD=
+# 配置环境变量: $REGISTRY_PASSWORD,$REGISTRY_USERNAME,$REGISTRY_ADDRESS
 IMAGE=${REGISTRY_USERNAME}/behappy-screw-doc:latest
 # 登陆
 echo "$REGISTRY_PASSWORD" | sudo docker login -u "${REGISTRY_USERNAME}" --password-stdin "${REGISTRY_ADDRESS}"
