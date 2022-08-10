@@ -18,7 +18,7 @@
 
 ### 部署方式
 
-- 需要一个数据库,并执行根目录下的init.sql
+- 需要一个数据库,并执行resources/sql目录下的screw_doc.sql
 - Docker-compose部署, 可以直接使用docker-compose文件部署(先修改环境变量)
 
 ```

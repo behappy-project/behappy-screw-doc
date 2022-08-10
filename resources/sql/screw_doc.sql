@@ -63,6 +63,18 @@ create table sys_user
 )
     collate = utf8mb4_unicode_ci;
 
+create table sys_database_history
+(
+    history_id int auto_increment
+        primary key,
+    database_id int not null,
+    database_name varchar(256) null,
+    description varchar(1000) null,
+    update_time datetime default CURRENT_TIMESTAMP null,
+    update_user varchar(256) null
+)
+    comment '更新历史回溯';
+
 /*插入数据*/
 INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('user', 'el-icon-user', 'icon');
 INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('house', 'el-icon-house', 'icon');
