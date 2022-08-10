@@ -7,9 +7,11 @@ import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
 import org.xiaowu.behappy.screw.common.core.util.Result;
 import org.xiaowu.behappy.screw.dto.ScrewContextLoadDto;
 import org.xiaowu.behappy.screw.dto.ScrewSchemaDto;
+import org.xiaowu.behappy.screw.dto.UpdateDocDto;
 import org.xiaowu.behappy.screw.entity.Database;
 import org.xiaowu.behappy.screw.factory.ScrewContextLoadService;
 import org.xiaowu.behappy.screw.factory.ScrewFactory;
+import org.xiaowu.behappy.screw.service.DatabaseHistoryService;
 import org.xiaowu.behappy.screw.service.DatabaseService;
 
 import java.util.LinkedHashMap;
@@ -30,6 +32,8 @@ public class ScrewController {
 
     private final DatabaseService databaseService;
 
+    private final DatabaseHistoryService databaseHistoryService;
+
     /**
      * 生成数据库文档
      * @param screwContextLoadDto
@@ -42,6 +46,17 @@ public class ScrewController {
         return Result.success();
     }
 
+    /**
+     * 更新数据库文档
+     * @param updateDocDto
+     * @return
+     */
+    @PostMapping("/update-doc")
+    public Result updateDoc(@RequestBody UpdateDocDto updateDocDto) {
+        ScrewContextLoadService screwContextLoadService = screwFactory.getScrewService(updateDocDto.getDataSourceEnum().getDatasource());
+        screwContextLoadService.updateDoc(updateDocDto);
+        return Result.success();
+    }
 
     /**
      * 根据数据源和角色查询数据库
@@ -68,4 +83,14 @@ public class ScrewController {
         }
         return Result.success(linkedList);
     }
+
+    /**
+     * 获取所有数据更新历史
+     * @return
+     */
+    @GetMapping("/history/{databaseId}")
+    public Result history(@PathVariable int databaseId) {
+        return databaseHistoryService.history(databaseId);
+    }
+
 }

@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 import org.xiaowu.behappy.screw.common.core.config.ScrewProperties;
 import org.xiaowu.behappy.screw.common.core.constant.CommonConstant;
 import org.xiaowu.behappy.screw.dto.ScrewContextLoadDto;
+import org.xiaowu.behappy.screw.dto.UpdateDocDto;
 import org.xiaowu.behappy.screw.entity.Database;
 import org.xiaowu.behappy.screw.factory.ScrewContextLoadService;
 import org.xiaowu.behappy.screw.service.DatabaseService;
@@ -40,6 +41,12 @@ public class MysqlScrewContextLoadServiceImpl implements ScrewContextLoadService
             }
         }
     }
+
+    @Override
+    public void updateDoc(UpdateDocDto updateDocDto) {
+        databaseService.updateDocs(updateDocDto, CommonConstant.MYSQL_URL);
+    }
+
 
 
 }

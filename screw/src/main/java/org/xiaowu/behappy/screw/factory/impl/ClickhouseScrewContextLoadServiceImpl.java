@@ -6,11 +6,14 @@ import org.springframework.util.CollectionUtils;
 import org.xiaowu.behappy.screw.common.core.config.ScrewProperties;
 import org.xiaowu.behappy.screw.common.core.constant.CommonConstant;
 import org.xiaowu.behappy.screw.dto.ScrewContextLoadDto;
+import org.xiaowu.behappy.screw.dto.UpdateDocDto;
 import org.xiaowu.behappy.screw.entity.Database;
+import org.xiaowu.behappy.screw.entity.DatabaseHistory;
 import org.xiaowu.behappy.screw.factory.ScrewContextLoadService;
 import org.xiaowu.behappy.screw.service.DatabaseService;
 import org.xiaowu.behappy.screw.util.ScrewUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,5 +41,10 @@ public class ClickhouseScrewContextLoadServiceImpl implements ScrewContextLoadSe
                 ScrewUtils.loadDoc(dataSourceProperty, url, database,datasource);
             }
         }
+    }
+
+    @Override
+    public void updateDoc(UpdateDocDto updateDocDto) {
+        databaseService.updateDocs(updateDocDto,CommonConstant.CLICKHOUSE_URL);
     }
 }
