@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.constant.HttpStatus;
+import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 import org.xiaowu.behappy.screw.common.core.util.Result;
 import org.xiaowu.behappy.screw.dto.UserDto;
 import org.xiaowu.behappy.screw.dto.UserPasswordDto;
 import org.xiaowu.behappy.screw.entity.User;
 import org.xiaowu.behappy.screw.service.UserService;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -23,31 +24,31 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/login")
-    public Result login(@RequestBody UserDto userDTO) {
-        String username = userDTO.getUsername();
-        String password = userDTO.getPassword();
-        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
-            return Result.error(HttpStatus.CODE_400, "参数错误");
-        }
-        UserDto dto = userService.login(userDTO);
-        return Result.success(dto);
-    }
-
     @PostMapping("/register")
     public Result register(@RequestBody UserDto userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
-            return Result.error(HttpStatus.CODE_400, "参数错误");
+            return Result.error(ResStatus.CODE_400, "参数错误");
         }
         return Result.success(userService.register(userDTO));
+    }
+
+    @PostMapping("/login")
+    public Result login(@RequestBody UserDto userDTO) {
+        String username = userDTO.getUsername();
+        String password = userDTO.getPassword();
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            return Result.error(ResStatus.CODE_400, "参数错误");
+        }
+        UserDto dto = userService.login(userDTO);
+        return Result.success(dto);
     }
 
     // 新增或者更新
     @PostMapping
     public Result save(@RequestBody User user) {
-        return Result.success(userService.saveUpdate(user));
+        return Result.success(userService.saveUser(user));
     }
 
     /**
@@ -63,12 +64,14 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
-        return Result.success(userService.removeById(id));
+        userService.deleteBatch(Collections.singletonList(id));
+        return Result.success();
     }
 
     @PostMapping("/del/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        return Result.success(userService.removeByIds(ids));
+        userService.deleteBatch(ids);
+        return Result.success();
     }
 
     @GetMapping
@@ -86,7 +89,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Result findOne(@PathVariable Integer id) {
-        return Result.success(userService.getById(id));
+        return Result.success(userService.findByUserId(id));
     }
 
     @GetMapping("/username/{username}")
@@ -102,19 +105,6 @@ public class UserController {
                              @RequestParam(defaultValue = "") String username,
                              @RequestParam(defaultValue = "") String email,
                              @RequestParam(defaultValue = "") String address) {
-
-//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-//        queryWrapper.orderByDesc("id");
-//        if (!"".equals(username)) {
-//            queryWrapper.like("username", username);
-//        }
-//        if (!"".equals(email)) {
-//            queryWrapper.like("email", email);
-//        }
-//        if (!"".equals(address)) {
-//            queryWrapper.like("address", address);
-//        }
-
         return Result.success(userService.findPage(new Page<>(pageNum, pageSize), username, email, address));
     }
 

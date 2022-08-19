@@ -3,7 +3,7 @@ package org.xiaowu.behappy.screw.common.core.util;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.xiaowu.behappy.screw.common.core.constant.HttpStatus;
+import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 
 /**
  * 接口统一返回包装类
@@ -18,11 +18,11 @@ public class Result {
     private Object data;
 
     public static Result success() {
-        return new Result(HttpStatus.CODE_200, "", null);
+        return new Result(ResStatus.CODE_200, "", null);
     }
 
     public static Result success(Object data) {
-        return new Result(HttpStatus.CODE_200, "", data);
+        return new Result(ResStatus.CODE_200, "", data);
     }
 
     public static Result error(String code, String msg) {
@@ -30,7 +30,7 @@ public class Result {
     }
 
     public static Result error() {
-        return new Result(HttpStatus.CODE_500, "系统错误", null);
+        return new Result(ResStatus.CODE_500, "系统错误", null);
     }
 
 }

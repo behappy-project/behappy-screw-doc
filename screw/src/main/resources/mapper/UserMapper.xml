@@ -5,7 +5,6 @@
     <resultMap id="pageUser" type="org.xiaowu.behappy.screw.entity.User">
         <result column="id" property="id" />
         <result column="username" property="username" />
-        <result column="nickname" property="nickname" />
         <result column="email" property="email" />
         <result column="phone" property="phone" />
         <result column="address" property="address" />

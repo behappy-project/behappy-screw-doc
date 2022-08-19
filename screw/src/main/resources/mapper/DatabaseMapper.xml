@@ -16,23 +16,43 @@
         from (select child.id, child.name, child.icon, child.description
               from sys_database child
                        join
-                   (select sd.id
+                   (select sd.id,sd.name
                     from sys_database sd
-                    where pid is null
-                      <if test="datasource != null and datasource != ''">
-                          and name = #{datasource}
-                      </if>
-                     ) parent
-                   on child.pid = parent.id) sd
+                    where pid is null) parent
+                   on child.pid = parent.id
+                    join sys_datasource sdc on
+                    sdc.name = parent.name
+                <if test="datasource != null and datasource != ''">
+                    and sdc.data_source = #{datasource}
+                </if>
+                <if test="name != null and name != ''">
+                    and sdc.name = #{name}
+                </if>) sd
                  join sys_role_database srd on sd.id = srd.database_id
                  join sys_role sr on srd.role_id = sr.id
         <where>
             <if test="flag != null and flag != ''">
                 and sr.flag = #{flag}
             </if>
+        </where>
+    </select>
+
+    <select id="findDbsOrderBySortNum" resultType="org.xiaowu.behappy.screw.entity.Database">
+        select * from sys_database
+        <where>
             <if test="name != null and name != ''">
-                and sd.name = #{name}
+                name = #{name}
             </if>
         </where>
+        union
+        select child.* from sys_database child
+                join (select * from sys_database
+                <where>
+                    <if test="name != null and name != ''">
+                        name = #{name}
+                    </if>
+                </where>) parent
+                on child.pid = parent.id
+                order by sort_num desc
     </select>
 </mapper>

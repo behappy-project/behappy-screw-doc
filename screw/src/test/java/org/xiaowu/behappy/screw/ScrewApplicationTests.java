@@ -7,9 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.xiaowu.behappy.screw.entity.User;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-@SpringBootTest
+//@SpringBootTest
 class ScrewApplicationTests {
 
     @Autowired
@@ -23,7 +24,6 @@ class ScrewApplicationTests {
     void contextLoads() {
         User user = new User();
         user.setId(123);
-        user.setNickname("小五");
         testCacheService.testCacheUser(user);
         TimeUnit.SECONDS.sleep(1);
         User cacheUser = testCacheService.getCacheUser(user.getId());

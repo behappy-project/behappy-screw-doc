@@ -7,12 +7,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.xiaowu.behappy.screw.common.cache.constants.CacheConstants;
-import org.xiaowu.behappy.screw.common.core.constant.HttpStatus;
+import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 import org.xiaowu.behappy.screw.common.core.enums.RoleEnum;
 import org.xiaowu.behappy.screw.common.core.exception.ServiceException;
 import org.xiaowu.behappy.screw.common.core.util.TokenUtils;
@@ -21,12 +20,9 @@ import org.xiaowu.behappy.screw.dto.UserPasswordDto;
 import org.xiaowu.behappy.screw.entity.Database;
 import org.xiaowu.behappy.screw.entity.User;
 import org.xiaowu.behappy.screw.mapper.RoleDatabaseMapper;
-import org.xiaowu.behappy.screw.mapper.RoleMapper;
 import org.xiaowu.behappy.screw.mapper.UserMapper;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -38,57 +34,36 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
     private final UserMapper userMapper;
 
-    private final RoleMapper roleMapper;
-
     private final RoleDatabaseMapper roleDatabaseMapper;
 
     private final DatabaseService databaseService;
 
     private final CacheManager cacheManager;
 
-    @Cacheable(value = CacheConstants.USER_CACHE,key = "#id")
-    @Override
-    public User getById(Serializable id) {
-        return super.getById(id);
-    }
-
-
     @CachePut(value = CacheConstants.USER_CACHE, key="#user.id")
-    public User saveUpdate(User user) {
+    public User saveUser(User user) {
         super.saveOrUpdate(user);
         return user;
     }
 
 
-    @CacheEvict(value = CacheConstants.USER_CACHE,key = "#id")
-    @Override
-    public boolean removeById(Serializable id) {
-        return super.removeById(id);
-    }
-
-    @Override
-    public boolean removeByIds(Collection<?> list) {
-        for (Object o : list) {
-            cacheManager.getCache(CacheConstants.USER_CACHE).evict(o);
-        }
-        return super.removeByIds(list);
-    }
-
     public UserDto login(UserDto userDTO) {
-        User one = getUserInfo(userDTO);
-        if (one != null) {
-            BeanUtil.copyProperties(one, userDTO, true);
+        User dbUser = getUserInfo(userDTO);
+        if (dbUser != null) {
             // 设置token
-            String token = TokenUtils.genToken(one.getId().toString(), one.getPassword());
+            String token = TokenUtils.genToken(dbUser.getId(), dbUser.getPassword());
             userDTO.setToken(token);
-
-            String role = one.getRole(); // ROLE_ADMIN
+            // ROLE_ADMIN
+            String role = dbUser.getRole();
             userDTO.setRole(role);
+            userDTO.setRoleId(dbUser.getRoleId());
+            userDTO.setUsername(dbUser.getUsername());
+            userDTO.setAvatarUrl(dbUser.getAvatarUrl());
             // 设置用户的数据库列表
             setDatabases(userDTO);
             return userDTO;
         } else {
-            throw new ServiceException(HttpStatus.CODE_600, "用户名或密码错误");
+            throw new ServiceException(ResStatus.CODE_600, "用户名或密码错误");
         }
     }
 
@@ -100,9 +75,10 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
             // 默认一个普通用户的角色
             one.setRole(RoleEnum.ROLE_USER.toString());
             one.setRoleId(RoleEnum.ROLE_USER.getId());
-            save(one);  // 把 copy完之后的用户对象存储到数据库
+            // 把 copy完之后的用户对象存储到数据库
+            save(one);
         } else {
-            throw new ServiceException(HttpStatus.CODE_600, "用户已存在");
+            throw new ServiceException(ResStatus.CODE_600, "用户已存在");
         }
         return one;
     }
@@ -110,7 +86,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     public void updatePassword(UserPasswordDto userPasswordDTO) {
         int update = userMapper.updatePassword(userPasswordDTO);
         if (update < 1) {
-            throw new ServiceException(HttpStatus.CODE_600, "密码错误");
+            throw new ServiceException(ResStatus.CODE_600, "密码错误");
         }
     }
 
@@ -124,25 +100,26 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
         queryWrapper.eq("password", userDTO.getPassword());
         User one;
         try {
-            one = getOne(queryWrapper); // 从数据库查询用户信息
+            // 从数据库查询用户信息
+            one = getOne(queryWrapper);
         } catch (Exception e) {
-            throw new ServiceException(HttpStatus.CODE_500, "系统错误");
+            throw new ServiceException(ResStatus.CODE_500, "系统错误");
         }
         return one;
     }
 
     /**
-     * 获取当前角色的菜单列表
+     * 赋值当前角色的菜单列表
      * @param userDTO
      * @return
      */
     private void setDatabases(UserDto userDTO) {
-        Integer roleId = roleMapper.selectByFlag(userDTO.getRole());
+        Integer roleId = userDTO.getRoleId();
         // 当前角色的所有菜单id集合
         List<Integer> roleDatabaseIds = roleDatabaseMapper.selectByRoleId(roleId);
 
         // 查出系统所有的菜单(树形)
-        List<Database> databases = databaseService.findMenus("");
+        List<Database> databases = databaseService.findDbs("");
         // new一个最后筛选完成之后的list
         List<Database> roleDatabases = new ArrayList<>();
         // 筛选当前用户角色的菜单
@@ -155,7 +132,21 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
             children.removeIf(child -> !roleDatabaseIds.contains(child.getId()));
         }
         userDTO.setDatabases(roleDatabases);
-        userDTO.setRoleId(roleId);
     }
 
+
+    @Cacheable(value = CacheConstants.USER_CACHE,key = "#id")
+    public User findByUserId(Integer id) {
+        return getById(id);
+    }
+
+
+    public void deleteBatch(List<Integer> ids) {
+        boolean success = removeByIds(ids);
+        if (success) {
+            for (Integer id : ids) {
+                cacheManager.getCache(CacheConstants.USER_CACHE).evict(id);
+            }
+        }
+    }
 }

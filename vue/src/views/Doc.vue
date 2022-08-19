@@ -1,13 +1,20 @@
 <template>
   <div>
     <div style="margin: 10px 0">
-      <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
-      <el-select v-model="value" placeholder="请选择数据源">
+      <el-select v-model="name" placeholder="请选择所属父级菜单">
         <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.value"
-            :value="item.value">
+            v-for="(item,index) in dsNames"
+            :key="index"
+            :label="item"
+            :value="item">
+        </el-option>
+      </el-select>
+      <el-select v-model="value" placeholder="请选择数据源"  class="ml-5">
+        <el-option
+            v-for="(item,index) in options"
+            :key="index"
+            :label="item"
+            :value="item">
         </el-option>
       </el-select>
       <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
@@ -18,7 +25,6 @@
       <el-tooltip placement="top">
         <div slot="content">新文档生成适用<br/>生成文档不会要求输入更新内容</div>
         <el-popconfirm
-            class="ml-5"
             confirm-button-text='确定'
             cancel-button-text='我再想想'
             icon="el-icon-info"
@@ -41,7 +47,7 @@
       </el-table-column>
       <el-table-column prop="name" label="数据库名称" align="center">
         <template slot-scope="scope">
-          <a target="_blank" :href="serverIp+'/doc/'+value.toLowerCase()+'/'+scope.row.name+'.html?token='+user.token"
+          <a target="_blank" :href="serverIp+'/doc/'+scope.row.dsName+'/'+scope.row.name+'.html?token='+user.token"
              style="white-space:nowrap"><u>{{ scope.row.name }}</u></a>
         </template>
       </el-table-column>
@@ -136,11 +142,16 @@ export default {
       // 查看历史回溯
       historyFormVisible: false,
       updateDocId: '',
-      updateDocContent: ''
+      updateDocContent: '',
+      dsNames: [],
     }
   },
   created() {
     this.load()
+    this.getDatasourceType()
+    if (this.dsNames.length !== 0){
+      this.name = this.dsNames[0]
+    }
   },
   methods: {
     formatFormDate(date) {
@@ -149,24 +160,29 @@ export default {
     formatFormDateTime(date) {
       return parseTime(date)
     },
+    getDatasourceType() {
+      //  获取数据源类型
+      this.request.get('/database/options').then(res => {
+        this.options = res.data
+      })
+      this.request.get("/datasource/ds-name").then(res => {
+        this.dsNames = res.data
+      })
+    },
     load() {
-      this.request.post("/screw/schemas", {
+      this.request.post("/database/schemas", {
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         name: this.name,
-        dataSourceEnum: this.value,
+        dataSource: this.value,
         role: this.user.role
       }).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
       })
-      //  获取数据源
-      this.request.get('/screw/options').then(res => {
-        this.options = res.data
-      })
     },
     findHistory(databaseId) {
-      this.request.get(`/screw/history/${databaseId}`)
+      this.request.get(`/database/history/${databaseId}`)
           .then(res => {
             this.databaseHistory = res.data
           })
@@ -176,8 +192,7 @@ export default {
       this.request.post("/screw/update-doc", {
         id: this.updateDocId,
         dataSourceEnum: this.value,
-        updateDocContent: this.updateDocContent,
-        updateUser: JSON.parse(localStorage.getItem("user")).username
+        updateDocContent: this.updateDocContent
       }).then(res => {
         if (res.code === '200') {
           this.$message.success("更新文档成功")
@@ -207,7 +222,9 @@ export default {
       })
     },
     reset() {
-      this.name = ""
+      if (this.dsNames.length !== 0){
+        this.name = this.dsNames[0]
+      }
       this.load()
     },
     handleSizeChange(pageSize) {

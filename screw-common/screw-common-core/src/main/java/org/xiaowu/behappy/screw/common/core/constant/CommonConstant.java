@@ -6,9 +6,11 @@ package org.xiaowu.behappy.screw.common.core.constant;
  */
 public interface CommonConstant {
 
-    String TOKEN = "token";
+    String ERR_CODE = "err_code";
 
-    String DICT_TYPE_ICON = "icon";
+    String ERR_MSG = "err_msg";
+
+    String TOKEN = "token";
 
     /*-----------定义数据源常量-----------*/
     String MYSQL = "mysql";
@@ -21,5 +23,13 @@ public interface CommonConstant {
 
     String CLICKHOUSE_URL = "jdbc:clickhouse://%s:%d/%s?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai";
     /*-----------定义url常量-----------*/
+
+
+    /*-----------定义driver class常量-----------*/
+    String MYSQL_DRIVER = "com.mysql.cj.jdbc.Driver";
+
+    String CLICKHOUSE_DRIVER = "ru.yandex.clickhouse.ClickHouseDriver";
+    /*-----------定义driver class常量-----------*/
+
 
 }

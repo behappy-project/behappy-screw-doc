@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.constant.CommonConstant;
+import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
 import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.xiaowu.behappy.screw.dto.ScrewSchemaDto;
 import org.xiaowu.behappy.screw.entity.Database;
-import org.xiaowu.behappy.screw.entity.Dict;
-import org.xiaowu.behappy.screw.mapper.DictMapper;
+import org.xiaowu.behappy.screw.service.DatabaseHistoryService;
 import org.xiaowu.behappy.screw.service.DatabaseService;
 
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/database")
@@ -22,7 +22,7 @@ public class DatabaseController {
 
     private final DatabaseService databaseService;
 
-    private final DictMapper dictMapper;
+    private final DatabaseHistoryService databaseHistoryService;
 
     // 新增或者更新
     @PostMapping
@@ -51,9 +51,14 @@ public class DatabaseController {
         return Result.success(databaseService.list().stream().map(Database::getId));
     }
 
+    /**
+     * 这里查询参数name是父级菜单
+     * @param name
+     * @return
+     */
     @GetMapping
     public Result findAll(@RequestParam(defaultValue = "") String name) {
-        return Result.success(databaseService.findMenus(name));
+        return Result.success(databaseService.findDbs(name));
     }
 
     @GetMapping("/{id}")
@@ -71,11 +76,34 @@ public class DatabaseController {
         return Result.success(databaseService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
-    @GetMapping("/icons")
-    public Result getIcons() {
-        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("type", CommonConstant.DICT_TYPE_ICON);
-        return Result.success(dictMapper.selectList(queryWrapper));
+    /**
+     * 根据数据源和角色查询数据库
+     * @param screwSchemaDto
+     * @return
+     */
+    @PostMapping("/schemas")
+    public Result allSchemas(@RequestBody ScrewSchemaDto screwSchemaDto) {
+        Page<Database> list = databaseService.allSchemas(screwSchemaDto);
+        return Result.success(list);
+    }
+
+    /**
+     * 获取所有数据源类型
+     * @return
+     */
+    @GetMapping("/options")
+    public Result options() {
+        DataSourceEnum[] values = DataSourceEnum.values();
+        return Result.success(Arrays.asList(values));
+    }
+
+    /**
+     * 获取所有数据更新历史
+     * @return
+     */
+    @GetMapping("/history/{databaseId}")
+    public Result history(@PathVariable int databaseId) {
+        return databaseHistoryService.history(databaseId);
     }
 
 }

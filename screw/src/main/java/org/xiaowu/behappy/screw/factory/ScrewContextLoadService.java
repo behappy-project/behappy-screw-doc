@@ -12,8 +12,12 @@ public interface ScrewContextLoadService {
     /**
      * 执行文档
      */
-    void screw(ScrewContextLoadDto screwContextLoadDto);
+    void contextLoads(ScrewContextLoadDto screwContextLoadDto);
 
+    /**
+     * 更新文档,带comment
+     * @param updateDocDto
+     */
     void updateDoc(UpdateDocDto updateDocDto);
 
 }

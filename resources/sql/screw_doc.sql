@@ -1,5 +1,5 @@
-create database if not exists screw_doc;
-use screw_doc;
+create database if not exists screw_doc_new;
+use screw_doc_new;
 /*建表*/
 -- auto-generated definition
 create table sys_database
@@ -15,14 +15,21 @@ create table sys_database
     collate = utf8mb4_unicode_ci;
 
 -- auto-generated definition
-create table sys_dict
+create table sys_datasource
 (
-    name  varchar(255) null comment '名称',
-    value varchar(255) null comment '内容',
-    type  varchar(255) null comment '类型'
+    id          int auto_increment comment 'id'
+        primary key,
+    data_source        varchar(255) null comment '数据源类型',
+    name        varchar(255) null comment '数据源名称(唯一)',
+    addr        varchar(255) null comment '图标',
+    username        varchar(255) null comment '用户名',
+    password        varchar(255) null comment '密码',
+    port         int          null comment '父级id',
+    ignore_table_name        longtext null comment '忽略表面',
+    ignore_prefix        longtext null comment '忽略表前缀',
+    ignore_suffix        longtext null comment '忽略表后缀'
 )
     collate = utf8mb4_unicode_ci;
-
 -- auto-generated definition
 create table sys_role
 (
@@ -40,7 +47,7 @@ create table sys_role
 create table sys_role_database
 (
     role_id     int not null comment '角色id',
-    database_id int not null comment '菜单id',
+    database_id int not null comment '数据库id',
     primary key (role_id, database_id)
 )
     comment '角色菜单关系表' collate = utf8mb4_unicode_ci;
@@ -52,14 +59,13 @@ create table sys_user
         primary key,
     username    varchar(50)                         null comment '用户名',
     password    varchar(50)                         null comment '密码',
-    nickname    varchar(50)                         null comment '昵称',
     email       varchar(50)                         null comment '邮箱',
     phone       varchar(20)                         null comment '电话',
     address     varchar(255)                        null comment '地址',
-    create_time timestamp default CURRENT_TIMESTAMP null comment '创建时间',
+    create_time datetime default current_timestamp null comment '创建时间',
     avatar_url  varchar(255)                        null comment '头像',
-    role        varchar(50)                         null comment '角色',
-    role_id     int                                 null
+    role        varchar(50)                         null comment '角色flag',
+    role_id     int                                 null comment '供缓存查询'
 )
     collate = utf8mb4_unicode_ci;
 
@@ -70,23 +76,13 @@ create table sys_database_history
     database_id int not null,
     database_name varchar(256) null,
     description varchar(1000) null,
-    update_time datetime default CURRENT_TIMESTAMP null,
+    update_time datetime default current_timestamp null,
     update_user varchar(256) null
 )
     comment '更新历史回溯';
 
-/*插入数据*/
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('user', 'el-icon-user', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('house', 'el-icon-house', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('menu', 'el-icon-menu', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-custom', 'el-icon-s-custom', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-grid', 'el-icon-s-grid', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('document', 'el-icon-document', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('coffee', 'el-icon-coffee
-', 'icon');
-INSERT INTO screw_doc.sys_dict (name, value, type) VALUES ('s-marketing', 'el-icon-s-marketing', 'icon');
 
-INSERT INTO screw_doc.sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
-INSERT INTO screw_doc.sys_role (id, name, description, flag) VALUES (2, '普通角色', '普通角色', 'ROLE_USER');
+INSERT INTO sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
+INSERT INTO sys_role (id, name, description, flag) VALUES (2, '普通角色', '普通角色', 'ROLE_USER');
 
-INSERT INTO screw_doc.sys_user (id, username, password, nickname, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', 'admin', '小五', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);
+INSERT INTO sys_user (id, username, password, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', 'admin', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);

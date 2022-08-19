@@ -3,6 +3,9 @@ package org.xiaowu.behappy.screw.common.core.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 内置系统角色
+ */
 @Getter
 @AllArgsConstructor
 public enum RoleEnum {

@@ -2,14 +2,15 @@
   <el-card style="width: 500px;">
     <el-form label-width="80px" size="small">
       <el-form-item label="头像">
-        <img v-if="form.avatarUrl" :src="form.avatarUrl" class="avatar">
+<!--        <img v-if="form.avatarUrl" :src="form.avatarUrl" class="avatar">-->
+        <div v-if="form.avatarUrl">
+          <el-avatar shape="square" :size="100" fit="fill" :src="form.avatarUrl"></el-avatar>
+          <el-input placeholder="请手动输入url地址" v-model="form.avatarUrl" autocomplete="off"></el-input>
+        </div>
         <el-input v-else placeholder="请手动输入url地址" v-model="form.avatarUrl" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="用户名">
         <el-input v-model="form.username" disabled autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="昵称">
-        <el-input v-model="form.nickname" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="邮箱">
         <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -46,6 +47,18 @@ export default {
   methods: {
     async getUser() {
       return (await this.request.get("/user/username/" + this.user.username)).data
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
     },
     save() {
       this.request.post("/user", this.form).then(res => {

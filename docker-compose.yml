@@ -7,16 +7,6 @@ services:
     image: wangxiaowu950330/behappy-screw-doc:latest
     # 自定义环境变量
     environment:
-      # 生成文档数据源: MYSQL
-      DATASOURCE_MYSQL_USERNAME: root
-      DATASOURCE_MYSQL_PASSWORD: root
-      DATASOURCE_MYSQL_IP: 127.0.0.1
-      DATASOURCE_MYSQL_PORT: 3306
-      # 生成文档数据源: CLICKHOUSE
-      DATASOURCE_CH_USERNAME: admin
-      DATASOURCE_CH_PASSWORD: admin
-      DATASOURCE_CH_IP: 127.0.0.1
-      DATASOURCE_CH_PORT: 9000
       # 缓存方式,如果是caffeine,redis配置可不配
       CACHE_TYPE: caffeine
       REDIS_HOST: 127.0.0.1

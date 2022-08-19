@@ -1,5 +1,8 @@
 package org.xiaowu.behappy.screw.util;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.text.StrJoiner;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.smallbun.screw.core.Configuration;
 import cn.smallbun.screw.core.engine.EngineConfig;
@@ -11,24 +14,30 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.experimental.UtilityClass;
 import org.xiaowu.behappy.screw.common.core.config.ScrewProperties;
+import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
 import org.xiaowu.behappy.screw.entity.Database;
+import org.xiaowu.behappy.screw.entity.Datasource;
 
 import javax.sql.DataSource;
 import java.io.File;
 
 /**
- * 生成
+ * load doc by screw
  * @author xiaowu
  */
 @UtilityClass
 public class ScrewUtils {
 
-    public void loadDoc(ScrewProperties.ScrewDataSourceProperty dataSourceProperty, String url, Database screwSchema, String datasource) {
-
+    public void loadDoc(String driverClass,
+                        String jdbcUrl,
+                        Datasource datasource,
+                        Database database) {
+        // host, port, database
+        String url = String.format(jdbcUrl, datasource.getAddr(), datasource.getPort(), database.getName());
         ScrewProperties screwProperties = SpringUtil.getBean(ScrewProperties.class);
 
         // 工作目录
-        String proFilePath = System.getProperty("user.dir") + File.separator + "doc" + File.separator + datasource;
+        String proFilePath = System.getProperty("user.dir") + File.separator + "doc" + File.separator + datasource.getName();
         //生成配置
         EngineConfig engineConfig = EngineConfig.builder()
                 //生成文件路径
@@ -40,35 +49,35 @@ public class ScrewUtils {
                 //生成模板实现
                 .produceType(EngineTemplateType.freemarker)
                 //自定义文件名称
-                .fileName(screwSchema.getName()).build();
+                .fileName(database.getName()).build();
 
-        ProcessConfig processConfig = getProcessConfig(screwProperties);
+        ProcessConfig processConfig = getProcessConfig(datasource);
         Configuration config = Configuration.builder()
                 //版本
                 .version(screwProperties.getVersion())
                 //描述
-                .description(screwSchema.getDescription())
+                .description(database.getDescription())
                 //数据源
-                .dataSource(getDataSource(dataSourceProperty.getDriverClassName(), url, dataSourceProperty.getUsername(), dataSourceProperty.getPassword()))
+                .dataSource(getDataSource(driverClass, url, datasource.getUsername(), datasource.getPassword()))
                 //生成配置
                 .engineConfig(engineConfig)
                 //生成配置
                 .produceConfig(processConfig)
-                .title(screwSchema.getName())
+                .title(database.getName())
                 .build();
         //执行生成
         new DocumentationExecute(config).execute();
     }
 
-    private ProcessConfig getProcessConfig(ScrewProperties screwProperties) {
+    private ProcessConfig getProcessConfig(Datasource datasource) {
         ProcessConfig processConfig = ProcessConfig.builder()
                 //指定生成逻辑、当存在指定表、指定表前缀、指定表后缀时，将生成指定表，其余表不生成、并跳过忽略表配置
                 //忽略表名
-                .ignoreTableName(screwProperties.getIgnoreTableName())
+                .ignoreTableName(StrUtil.split(datasource.getIgnoreTableName(),","))
                 //忽略表前缀
-                .ignoreTablePrefix(screwProperties.getIgnorePrefix())
+                .ignoreTablePrefix(StrUtil.split(datasource.getIgnorePrefix(),","))
                 //忽略表后缀
-                .ignoreTableSuffix(screwProperties.getIgnoreSuffix()).build();
+                .ignoreTableSuffix(StrUtil.split(datasource.getIgnoreSuffix(),",")).build();
         return processConfig;
     }
 
@@ -83,7 +92,6 @@ public class ScrewUtils {
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
         hikariConfig.setMinimumIdle(2);
         hikariConfig.setMaximumPoolSize(5);
-        DataSource dataSource = new HikariDataSource(hikariConfig);
-        return dataSource;
+        return new HikariDataSource(hikariConfig);
     }
 }

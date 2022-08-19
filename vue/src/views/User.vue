@@ -10,7 +10,6 @@
 
     <div style="margin: 10px 0">
       <el-popconfirm
-          class="ml-5"
           confirm-button-text='确定'
           cancel-button-text='我再想想'
           icon="el-icon-info"
@@ -32,7 +31,6 @@
           <el-tag type="warning" v-else>{{scope.row.role}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="nickname" label="昵称" width="120"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
       <el-table-column prop="phone" label="电话"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
@@ -72,11 +70,8 @@
         </el-form-item>
         <el-form-item label="角色">
           <el-select clearable v-model="form.role" placeholder="请选择角色" style="width: 100%">
-            <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.flag"></el-option>
+            <el-option v-for="(item,index) in roles" :key="index" :label="item.name" :value="item.flag"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="昵称">
-          <el-input v-model="form.nickname" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -115,10 +110,7 @@ export default {
       dialogFormVisible: false,
       multipleSelection: [],
       roles: [],
-      courses: [],
-      vis: false,
-      stuCourses: [],
-      stuVis: false
+      user: JSON.parse(localStorage.getItem("user"))
     }
   },
   created() {
@@ -144,12 +136,7 @@ export default {
       })
     },
     save() {
-      for (const role of this.roles) {
-        if (this.form.role === role.flag){
-          this.form.roleId = role.id
-          break
-        }
-      }
+      this.form.roleId = this.user.roleId
       this.request.post("/user", this.form).then(res => {
         if (res.code === '200') {
           this.$message.success("保存成功")

@@ -8,17 +8,19 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.xiaowu.behappy.screw.common.core.config.ScrewProperties;
-import org.xiaowu.behappy.screw.common.core.constant.CommonConstant;
-import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.springframework.util.CollectionUtils;
+import org.xiaowu.behappy.screw.common.core.util.AuthContextHolder;
+import org.xiaowu.behappy.screw.dto.ScrewContextLoadDto;
 import org.xiaowu.behappy.screw.dto.ScrewSchemaDto;
 import org.xiaowu.behappy.screw.dto.UpdateDocDto;
 import org.xiaowu.behappy.screw.entity.Database;
 import org.xiaowu.behappy.screw.entity.DatabaseHistory;
+import org.xiaowu.behappy.screw.entity.Datasource;
 import org.xiaowu.behappy.screw.mapper.DatabaseHistoryMapper;
 import org.xiaowu.behappy.screw.mapper.DatabaseMapper;
 import org.xiaowu.behappy.screw.util.ScrewUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,16 +34,13 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
 
     private final DatabaseHistoryMapper databaseHistoryMapper;
 
-    private final ScrewProperties screwProperties;
+    private final HttpServletRequest httpServletRequest;
 
-    public List<Database> findMenus(String name) {
-        QueryWrapper<Database> queryWrapper = new QueryWrapper<>();
-        queryWrapper.orderByAsc("sort_num");
-        if (StrUtil.isNotBlank(name)) {
-            queryWrapper.like("name", name);
-        }
+    private final DatasourceService datasourceService;
+
+    public List<Database> findDbs(String name) {
         // 查询所有数据
-        List<Database> list = list(queryWrapper);
+        List<Database> list = baseMapper.findDbsOrderBySortNum(name);
         // 找出pid为null的一级菜单
         List<Database> parentNodes = list.stream().filter(menu -> menu.getPid() == null).collect(Collectors.toList());
         // 找出一级菜单的子菜单
@@ -60,26 +59,44 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
         // 根据角色查询当前所持有数据库
         Page<Database> screwDatabaseVos = baseMapper.pageDatabase(new Page<>(screwSchemaDto.getPageNum(), screwSchemaDto.getPageSize()),
                 screwSchemaDto.getRole(),
-                screwSchemaDto.getDataSourceEnum().getDatasource(),
+                screwSchemaDto.getDataSource().getDatasource(),
                 screwSchemaDto.getName());
+        List<Database> records = screwDatabaseVos.getRecords();
+        for (Database record : records) {
+            record.setDsName(screwSchemaDto.getName());
+        }
         return screwDatabaseVos;
     }
 
+    public void contextLoads(ScrewContextLoadDto screwContextLoadDto, String jdbcUrl, String driverClass) {
+        if (!CollectionUtils.isEmpty(screwContextLoadDto.getIds())) {
+            // 先查出这些数据库
+            List<Database> databases = listByIds(screwContextLoadDto.getIds());
+            for (Database database : databases) {
+                Database parentDatabase = getOne(new LambdaQueryWrapper<Database>()
+                        .eq(Database::getId, database.getPid()));
+                // 再查出数据源配置信息
+                Datasource datasource = datasourceService.getOne(new LambdaQueryWrapper<Datasource>()
+                        .eq(Datasource::getName, parentDatabase.getName()));
+                ScrewUtils.loadDoc(driverClass, jdbcUrl, datasource, database);
+            }
+        }
+    }
 
-    public void updateDocs(UpdateDocDto updateDocDto, String jdbcUrl) {
-        String datasource = updateDocDto.getDataSourceEnum().getDatasource();
-        ScrewProperties.ScrewDataSourceProperty dataSourceProperty = screwProperties.getDatasource().get(datasource);
-        // 先查出这些数据库
+    public void updateDocs(UpdateDocDto updateDocDto, String jdbcUrl, String driverClass) {
+        // 先查出数据库
         Database database = getById(updateDocDto.getId());
-        // host, port, database
-        String databaseName = database.getName();
-        String url = String.format(jdbcUrl,dataSourceProperty.getIp(),dataSourceProperty.getPort(), databaseName);
-        ScrewUtils.loadDoc(dataSourceProperty, url, database, datasource);
+        Database parentDatabase = getOne(new LambdaQueryWrapper<Database>()
+                .eq(Database::getId, database.getPid()));
+        // 再查出数据源配置信息
+        Datasource datasource = datasourceService.getOne(new LambdaQueryWrapper<Datasource>()
+                .eq(Datasource::getName, parentDatabase.getName()));
+        ScrewUtils.loadDoc(driverClass, jdbcUrl, datasource, database);
         DatabaseHistory databaseHistory = new DatabaseHistory();
         databaseHistory.setDatabaseId(database.getId());
         databaseHistory.setDatabaseName(database.getName());
         databaseHistory.setUpdateTime(new Date());
-        databaseHistory.setUpdateUser(updateDocDto.getUpdateUser());
+        databaseHistory.setUpdateUser(AuthContextHolder.getUserName(httpServletRequest));
         databaseHistory.setDescription(updateDocDto.getUpdateDocContent());
         databaseHistoryMapper.insert(databaseHistory);
     }

@@ -32,6 +32,12 @@
           <span slot="title">角色管理</span>
         </template>
       </el-menu-item>
+      <el-menu-item index="/datasource">
+        <template slot="title">
+          <i class="el-icon-printer"></i>
+          <span slot="title">数据源配置</span>
+        </template>
+      </el-menu-item>
       <el-menu-item index="/database">
         <template slot="title">
           <i class="el-icon-s-flag"></i>

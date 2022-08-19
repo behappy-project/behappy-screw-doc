@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.xiaowu.behappy.screw.common.core.constant.CommonConstant;
 
 /**
- * 数据源
+ * 支持的数据源类型
  * @author xiaowu
  */
 @Getter

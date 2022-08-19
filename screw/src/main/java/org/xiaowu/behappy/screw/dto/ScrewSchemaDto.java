@@ -13,7 +13,7 @@ public class ScrewSchemaDto {
     /**
      * 数据源
      */
-    private DataSourceEnum dataSourceEnum;
+    private DataSourceEnum dataSource;
 
     /**
      * 角色
@@ -21,7 +21,7 @@ public class ScrewSchemaDto {
     private String role;
 
     /**
-     * 数据库名称
+     * 数据源名称(父级菜单)
      */
     private String name;
 

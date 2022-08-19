@@ -37,6 +37,11 @@ const routes = [
                 component: () => import('../views/Role.vue')
             },
             {
+                name: "数据源配置",
+                path: "/datasource",
+                component: () => import('../views/Datasource.vue')
+            },
+            {
                 name: "数据库管理",
                 path: "/database",
                 component: () => import('../views/Database.vue')
@@ -81,7 +86,6 @@ router.beforeEach((to, from, next) => {
     if (!token) {
         console.log(to.matched)
         if (to.matched.some(metadata => paths.includes(metadata.path))) {
-            console.log('进入登陆/注册')
             next()
         }
         // 未找到路由的情况

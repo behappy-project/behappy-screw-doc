@@ -9,6 +9,7 @@ import org.xiaowu.behappy.screw.common.core.util.Result;
 import org.xiaowu.behappy.screw.entity.Role;
 import org.xiaowu.behappy.screw.service.RoleService;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -22,19 +23,19 @@ public class RoleController {
     // 新增或者更新
     @PostMapping
     public Result save(@RequestBody Role role) {
-        roleService.saveOrUpdate(role);
+        roleService.saveRole(role);
         return Result.success();
     }
 
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
-        roleService.removeById(id);
+        roleService.deleteBatch(Collections.singletonList(id));
         return Result.success();
     }
 
     @PostMapping("/del/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        roleService.removeByIds(ids);
+        roleService.deleteBatch(ids);
         return Result.success();
     }
 

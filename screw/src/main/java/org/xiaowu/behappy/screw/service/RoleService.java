@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.xiaowu.behappy.screw.mapper.RoleDatabaseMapper;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,25 +42,26 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> implements IServi
     public List<String> getRoleDatabasesById(Integer roleId) {
         // 获取database ids
         List<Integer> databaseIds = roleDatabaseMapper.selectByRoleId(roleId);
+        if (CollUtil.isEmpty(databaseIds)) {
+            return Collections.emptyList();
+        }
         // 查出这些数据库的名称
         LambdaQueryWrapper<Database> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.in(Database::getId,databaseIds);
         List<Database> list = databaseService.list(lambdaQueryWrapper);
+        if (CollUtil.isEmpty(list)) {
+            return Collections.emptyList();
+        }
         return list.stream().map(Database::getName).collect(Collectors.toList());
     }
 
-    @Override
-    @CacheEvict(value = CacheConstants.ROLE_CACHE,key = "#roleId")
-    public boolean removeById(Serializable id) {
-        return super.removeById(id);
-    }
-
-    @Override
-    public boolean removeByIds(Collection<?> list) {
-        for (Object o : list) {
-            cacheManager.getCache(CacheConstants.ROLE_CACHE).evict(o);
+    public void deleteBatch(List<Integer> list) {
+        boolean success = removeByIds(list);
+        if (success) {
+            for (Integer id : list) {
+                cacheManager.getCache(CacheConstants.ROLE_CACHE).evict(id);
+            }
         }
-        return super.removeByIds(list);
     }
 
     /**
@@ -76,7 +79,8 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> implements IServi
         List<String> databaseNames = new LinkedList<>();
         for (Integer menuId : databases) {
             Database database = databaseService.getById(menuId);
-            if (database.getPid() != null && !menuIdsCopy.contains(database.getPid())) { // 二级菜单 并且传过来的menuId数组里面没有它的父级id
+            // 二级菜单 并且传过来的menuId数组里面没有它的父级id
+            if (database.getPid() != null && !menuIdsCopy.contains(database.getPid())) {
                 // 那么我们就得补上这个父级id
                 RoleDatabase roleDatabase = new RoleDatabase();
                 roleDatabase.setRoleId(roleId);
@@ -95,5 +99,10 @@ public class RoleService extends ServiceImpl<RoleMapper, Role> implements IServi
 
     public List<Integer> getRoleDatabase(Integer roleId) {
         return roleDatabaseMapper.selectByRoleId(roleId);
+    }
+
+    @CachePut(value = CacheConstants.ROLE_CACHE,key = "#role.id")
+    public void saveRole(Role role) {
+        saveOrUpdate(role);
     }
 }

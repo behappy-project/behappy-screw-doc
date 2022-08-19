@@ -47,7 +47,11 @@ public class Database implements Serializable {
      */
     private String sortNum;
 
+
     @TableField(exist = false)
     private List<Database> children;
+
+    @TableField(exist = false)
+    private String dsName;
 
 }
