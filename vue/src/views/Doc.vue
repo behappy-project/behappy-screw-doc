@@ -9,7 +9,7 @@
             :value="item">
         </el-option>
       </el-select>
-      <el-select v-model="value" placeholder="请选择数据源"  class="ml-5">
+      <el-select v-model="value" placeholder="请选择数据源" class="ml-5">
         <el-option
             v-for="(item,index) in options"
             :key="index"
@@ -68,7 +68,8 @@
               <el-button type="danger" slot="reference">更新文档 <i class="el-icon-plus"></i></el-button>
             </el-popconfirm>
           </el-tooltip>
-          <el-button style="margin-left: 10px" type="info" slot="reference" @click="findHistory(scope.row.id)">查看历史回溯
+          <el-button style="margin-left: 10px" type="info" slot="reference"
+                     @click="dataBaseHistoryId = scope.row.id;findHistory()">查看历史回溯
           </el-button>
         </template>
       </el-table-column>
@@ -101,12 +102,15 @@
     </el-dialog>
 
     <!--查看历史回溯-->
-    <el-dialog title="历史回溯" :visible.sync="historyFormVisible" width="30%">
-      <div class="sketch_content">
-        <el-timeline v-for="item in databaseHistory" :key="item.historyId">
+    <el-dialog title="历史回溯" :visible.sync="historyFormVisible" width="35%">
+      <div class="infinite-list"
+           v-infinite-scroll="dialogFindHistory"
+           :infinite-scroll-immediate="false"
+           style="height:500px;overflow-y:auto">
+        <el-timeline v-for="item in databaseHistory" :key="item.historyId" class="infinite-list-item">
           <el-timeline-item :timestamp="formatFormDate(new Date(item.updateTime))" placement="top">
             <el-card>
-              <h4>{{item.description}}</h4>
+              <h4>{{ item.description }}</h4>
               <p>{{ item.updateUser }} 更新于 {{ formatFormDateTime(new Date(item.updateTime)) }}</p>
             </el-card>
           </el-timeline-item>
@@ -144,14 +148,15 @@ export default {
       updateDocId: '',
       updateDocContent: '',
       dsNames: [],
+      // 历史回溯,数据库id
+      dataBaseHistoryId: '',
+      // 已查看历史回溯总数
+      haveWatchedDataBaseHistoryCount: 0
     }
   },
-  created() {
+  async created() {
+    await this.getDatasourceType()
     this.load()
-    this.getDatasourceType()
-    if (this.dsNames.length !== 0){
-      this.name = this.dsNames[0]
-    }
   },
   methods: {
     formatFormDate(date) {
@@ -160,14 +165,15 @@ export default {
     formatFormDateTime(date) {
       return parseTime(date)
     },
-    getDatasourceType() {
+    async getDatasourceType() {
       //  获取数据源类型
-      this.request.get('/database/options').then(res => {
-        this.options = res.data
-      })
-      this.request.get("/datasource/ds-name").then(res => {
-        this.dsNames = res.data
-      })
+      const optionRes = await this.request.get('/database/options')
+      this.options = optionRes.data
+      const dsNameRes = await this.request.get("/datasource/ds-name")
+      this.dsNames = dsNameRes.data
+      if (this.dsNames.length !== 0) {
+        this.name = this.dsNames[0]
+      }
     },
     load() {
       this.request.post("/database/schemas", {
@@ -181,12 +187,16 @@ export default {
         this.total = res.data.total
       })
     },
-    findHistory(databaseId) {
-      this.request.get(`/database/history/${databaseId}`)
-          .then(res => {
-            this.databaseHistory = res.data
-          })
+    async findHistory() {
+      this.haveWatchedDataBaseHistoryCount = 5
+      const res = await this.request.get(`/database/history/${this.dataBaseHistoryId}/${this.haveWatchedDataBaseHistoryCount}`,)
+      this.databaseHistory = res.data.records
       this.historyFormVisible = true
+    },
+    async dialogFindHistory() {
+      this.haveWatchedDataBaseHistoryCount += 5
+      const res = await this.request.get(`/database/history/${this.dataBaseHistoryId}/${this.haveWatchedDataBaseHistoryCount}`,)
+      this.databaseHistory = res.data.records
     },
     updateDoc() {
       this.request.post("/screw/update-doc", {
@@ -222,7 +232,7 @@ export default {
       })
     },
     reset() {
-      if (this.dsNames.length !== 0){
+      if (this.dsNames.length !== 0) {
         this.name = this.dsNames[0]
       }
       this.load()

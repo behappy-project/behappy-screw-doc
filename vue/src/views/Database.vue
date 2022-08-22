@@ -113,16 +113,19 @@ export default {
       isAddChildDbFlag: false
     }
   },
-  mounted() {
-    this.icons = icons.icons
-    this.request.get("/datasource/ds-name").then(res => {
-      this.dsNames = res.data
-    })
-  },
-  created() {
+  async created() {
+    await this.loadDsNames()
     this.load()
   },
   methods: {
+    async loadDsNames() {
+      this.icons = icons.icons
+      const res = await this.request.get("/datasource/ds-name")
+      this.dsNames = res.data
+      if (this.dsNames.length !== 0) {
+        this.name = this.dsNames[0]
+      }
+    },
     load() {
       this.request.get("/database", {
         params: {

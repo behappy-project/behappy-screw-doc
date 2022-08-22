@@ -98,12 +98,13 @@ public class DatabaseController {
     }
 
     /**
-     * 获取所有数据更新历史
+     * 获取所有数据更新历史,滚动更新
      * @return
      */
-    @GetMapping("/history/{databaseId}")
-    public Result history(@PathVariable int databaseId) {
-        return databaseHistoryService.history(databaseId);
+    @GetMapping("/history/{databaseId}/{pageSize}")
+    public Result history(@PathVariable Integer databaseId,
+                          @PathVariable Integer pageSize) {
+        return databaseHistoryService.history(databaseId,pageSize);
     }
 
 }

@@ -39,7 +39,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println(request.getRequestURI());
         try {
             // 先从header获取token值
             String token = request.getHeader(CommonConstant.TOKEN);
