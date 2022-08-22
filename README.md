@@ -16,9 +16,10 @@
 >
 > 方便开发人员的定期review
 
+### 首先需要一个mysql数据库,并执行resources/sql目录下的screw_doc.sql用于初始化配置信息
+
 ### 部署方式
 
-- 需要一个数据库,并执行resources/sql目录下的screw_doc.sql
 - Docker-compose部署, 可以直接使用docker-compose文件部署(先修改环境变量)
 
 ```
@@ -33,52 +34,43 @@ docker-compose up -d
 
 ### 使用方式
 
-> 两种角色
+```text
+大体支持两种角色,一种ROLE_ADMIN.另一种是ROLE_XXX
+ADMIN用于管理数据库,用户和角色信息
+XXX为普通角色,用于查看所分配数据库信息
+```
 
-- 管理员角色
-- 普通角色
+#### 先配置数据源信息
 
-#### **管理员角色**
+![img.png](resources/image/img.png)
 
-针对于`管理员角色`允许`创建用户`,`生成数据库文档`以及`分配对应角色所需要的数据库`
+#### 配置数据库信息
 
-如下
+![img.png](resources/image/img2.png)
 
-**创建数据库**
+#### 创建数据库/同步数据库
 
-![image-20220510152355712](resources/image/image-20220510152355712.png)
+![img.png](resources/image/img3.png)
 
-![image-20220510152459502](resources/image/image-20220510152459502.png)
+#### 对应角色分配数据库
 
-**生成文档**
+![img.png](resources/image/img4.png)
 
-![image-20220510152639302](resources/image/image-20220510152639302.png)
+#### admin账户执行初始化文档
 
-**赋予对应角色所拥有的数据库**
-
-![image-20220510152811067](resources/image/image-20220510152811067.png)
-
-**赋予test用户一个普通角色**
-
-![image-20220510152843106](resources/image/image-20220510152843106.png)
-
-#### **普通角色**
-
-**注册用户并登录**
-
-![image-20220510153502229](resources/image/image-20220510153502229.png)
-
-![image-20220510153208502](resources/image/image-20220510153208502.png)
-
-![image-20220510153425040](resources/image/image-20220510153425041.png)
+![img.png](resources/image/img5.png)
 
 ### 历史回溯功能
 
-![image.png](resources/image/111.png)
+此功能用于查询当前数据库的更新迭代信息
+
+![img.png](resources/image/img6.png)
+
+![image.png](resources/image/img7.png)
 
 ### 访问地址
 
-[访问地址](http://xxx:8999/screw-doc/index.html)
+`http://xxx:8999/`
 
 - [X]  mysql文档管理
 - [X]  角色划分
