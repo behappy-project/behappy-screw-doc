@@ -21,6 +21,7 @@ import org.xiaowu.behappy.screw.mapper.DatabaseMapper;
 import org.xiaowu.behappy.screw.util.ScrewUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,5 +100,22 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
         databaseHistory.setUpdateUser(AuthContextHolder.getUserName(httpServletRequest));
         databaseHistory.setDescription(updateDocDto.getUpdateDocContent());
         databaseHistoryMapper.insert(databaseHistory);
+    }
+
+    public void delete(Integer id) {
+        Database dbDatabase = getById(id);
+        List<Integer> ids = new ArrayList<>();
+        // 父级菜单
+        if (dbDatabase.getPid() == null){
+            LambdaQueryWrapper<Database> wrapper = new LambdaQueryWrapper<>();
+            wrapper.select(Database::getId);
+            wrapper.eq(Database::getPid,id);
+            List<Database> list = list(wrapper);
+            if (!CollectionUtils.isEmpty(list)){
+                ids = list.stream().map(Database::getId).collect(Collectors.toList());
+            }
+        }
+        ids.add(id);
+        removeBatchByIds(ids);
     }
 }

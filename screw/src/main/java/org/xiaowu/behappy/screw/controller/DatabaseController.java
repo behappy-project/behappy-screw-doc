@@ -36,7 +36,7 @@ public class DatabaseController {
 
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
-        databaseService.removeById(id);
+        databaseService.delete(id);
         return Result.success();
     }
 
