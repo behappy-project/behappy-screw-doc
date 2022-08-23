@@ -42,31 +42,31 @@ XXX为普通角色,用于查看所分配数据库信息
 
 #### 先配置数据源信息
 
-![img.png](resources/image/img.png)
+![img.png](resources/image/img_1.png)
 
 #### 配置数据库信息
 
-![img.png](resources/image/img2.png)
+![img.png](resources/image/img_2.png)
 
 #### 创建数据库/同步数据库
 
-![img.png](resources/image/img3.png)
+![img.png](resources/image/img_3.png)
 
 #### 对应角色分配数据库
 
-![img.png](resources/image/img4.png)
+![img.png](resources/image/img_4.png)
 
 #### admin账户执行初始化文档
 
-![img.png](resources/image/img5.png)
+![img.png](resources/image/img_5.png)
 
 ### 历史回溯功能
 
 此功能用于查询当前数据库的更新迭代信息
 
-![img.png](resources/image/img6.png)
+![img.png](resources/image/img_6.png)
 
-![image.png](resources/image/img7.png)
+![image.png](resources/image/img_7.png)
 
 ### 访问
 
