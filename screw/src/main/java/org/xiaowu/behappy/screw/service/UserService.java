@@ -1,6 +1,7 @@
 package org.xiaowu.behappy.screw.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -48,6 +49,8 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
 
     public UserDto login(UserDto userDTO) {
+        // 用户密码 md5加密
+        userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
         User dbUser = getUserInfo(userDTO);
         if (dbUser != null) {
             // 设置token
@@ -68,6 +71,8 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     }
 
     public User register(UserDto userDTO) {
+        // 用户密码 md5加密
+        userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
         User one = getUserInfo(userDTO);
         if (one == null) {
             one = new User();
@@ -84,6 +89,9 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     }
 
     public void updatePassword(UserPasswordDto userPasswordDTO) {
+        // md5加密
+        userPasswordDTO.setPassword(SecureUtil.md5(userPasswordDTO.getPassword()));
+        userPasswordDTO.setNewPassword(SecureUtil.md5(userPasswordDTO.getNewPassword()));
         int update = userMapper.updatePassword(userPasswordDTO);
         if (update < 1) {
             throw new ServiceException(ResStatus.CODE_600, "密码错误");

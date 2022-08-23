@@ -85,4 +85,4 @@ create table sys_database_history
 INSERT INTO sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
 INSERT INTO sys_role (id, name, description, flag) VALUES (2, '普通角色', '普通角色', 'ROLE_USER');
 
-INSERT INTO sys_user (id, username, password, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', 'admin', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);
+INSERT INTO sys_user (id, username, password, email, phone, address, create_time, avatar_url, role, role_id) VALUES (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 'admin@qq.com', '13988997788', '黑龙江', '2022-01-22 21:10:27', 'https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF', 'ROLE_ADMIN', 1);

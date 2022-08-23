@@ -9,7 +9,8 @@
             :value="item">
         </el-option>
       </el-select>
-      <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" class="ml-5" v-model="dsName"></el-input>
+      <el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" class="ml-5"
+                v-model="dsName"></el-input>
       <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
     </div>
@@ -27,7 +28,7 @@
       <el-table-column prop="ignoreTableName" type="textarea" label="忽略表名"></el-table-column>
       <el-table-column prop="ignorePrefix" type="textarea" label="忽略表前缀"></el-table-column>
       <el-table-column prop="ignoreSuffix" type="textarea" label="忽略表后缀"></el-table-column>
-      <el-table-column label="操作"  width="200" align="center">
+      <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
           <el-popconfirm
@@ -56,14 +57,14 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="配置数据源信息" :visible.sync="dialogFormVisible" width="30%" >
-      <el-form label-width="80px" size="small">
+    <el-dialog title="配置数据源信息" :visible.sync="dialogFormVisible" width="30%">
+      <el-form label-width="80px" size="small" :model="form" ref="form" :rules="rules">
         <el-form-item label="数据源类型">
           <el-select clearable v-model="form.dataSource" placeholder="请选择数据源类型" style="width: 100%">
             <el-option v-for="(item,index) in options" :key="index" :label="item" :value="item"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="数据源名称(唯一)">
+        <el-form-item label="数据源名称(唯一)" prop="name">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="地址">
@@ -111,7 +112,13 @@ export default {
       dialogFormVisible: false,
       user: JSON.parse(localStorage.getItem("user")),
       options: [],
-      value: 'MYSQL'
+      value: 'MYSQL',
+      rules: {
+        name: [
+          {required: true, message: '名称不能为空', trigger: "blur"},
+          {pattern: /^[a-zA-Z0-9_]*$/, message: '名称不能含有中文或特殊字符', trigger: "blur"},
+        ]
+      },
     }
   },
   created() {
@@ -119,6 +126,21 @@ export default {
     this.getDatasourceType()
   },
   methods: {
+    checkNameRule(value, callback) {
+      console.log('规则',value)
+      this.form.name = value
+      const reg = /^[a-zA-Z0-9_]*$/
+      if (value == '' || value == undefined || value !== value) {
+        callback("名称不能为空!");
+        return;
+      } else if (!reg.test(value)) {
+        callback("名称不能含有中文或特殊字符!");
+        return;
+      } else {
+        callback();
+        return
+      }
+    },
     load() {
       this.request.get("/datasource", {
         params: {
@@ -141,13 +163,19 @@ export default {
       })
     },
     save() {
-      this.request.post("/datasource", this.form).then(res => {
-        if (res.code === '200') {
-          this.$message.success("保存成功")
-          this.dialogFormVisible = false
-          this.load()
-        } else {
-          this.$message.error("保存失败")
+      this.$refs.form.validate((valid) => {
+        if (valid){
+          this.request.post("/datasource", this.form).then(res => {
+            if (res.code === '200') {
+              this.$message.success("保存成功")
+              this.dialogFormVisible = false
+              this.load()
+            } else {
+              this.$message.error("保存失败")
+            }
+          })
+        }else {
+          this.$message.error("表单填写有误")
         }
       })
     },
@@ -197,6 +225,6 @@ export default {
 
 <style>
 .headerBg {
-  background: #eee!important;
+  background: #eee !important;
 }
 </style>

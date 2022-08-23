@@ -19,6 +19,7 @@ FROM openjdk:11 as runtime
 WORKDIR /user/src/app
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ARG JAR_FILE=/user/src/app/screw/target/*.jar
-ENV JAVA_OPTS="-Xms128m -Xmx256m -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom"
+ENV JAVA_OPTS="-Xms128m -Xmx256m -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom" \
+    NODE_ENV="production"
 COPY --from=build ${JAR_FILE} app.jar
 ENTRYPOINT ["sh","-c","java -jar app.jar ${JAVA_OPTS}"]
