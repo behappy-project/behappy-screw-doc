@@ -76,6 +76,15 @@ const router = new VueRouter({
     routes
 })
 
+// 提供一个重置路由的方法
+export const resetRouter = () => {
+    router.matcher = new VueRouter({
+        mode: 'hash',
+        base: process.env.BASE_URL,
+        routes
+    })
+}
+
 router.beforeEach((to, from, next) => {
     localStorage.setItem("currentPathName", to.name)  // 设置当前的路由名称
     store.commit("setPath")

@@ -53,6 +53,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
         userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
         User dbUser = getUserInfo(userDTO);
         if (dbUser != null) {
+            userDTO.setPassword(null);
             // 设置token
             String token = TokenUtils.genToken(dbUser.getId(), dbUser.getPassword());
             userDTO.setToken(token);

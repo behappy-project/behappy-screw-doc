@@ -1,5 +1,6 @@
 package org.xiaowu.behappy.screw.common.core.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,6 +8,7 @@ import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 
 /**
  * 接口统一返回包装类
+ * @author xiaowu
  */
 @Data
 @NoArgsConstructor
