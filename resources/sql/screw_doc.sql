@@ -25,7 +25,7 @@ create table sys_datasource
     username        varchar(255) null comment '用户名',
     password        varchar(255) null comment '密码',
     port         int          null comment '父级id',
-    ignore_table_name        longtext null comment '忽略表面',
+    ignore_table_name        longtext null comment '忽略表名',
     ignore_prefix        longtext null comment '忽略表前缀',
     ignore_suffix        longtext null comment '忽略表后缀'
 )
