@@ -68,9 +68,13 @@ XXX为普通角色,用于查看所分配数据库信息
 
 ![image.png](resources/image/img7.png)
 
-### 访问地址
+### 访问
 
-`http://xxx:8999/`
+```
+http://xxx:8999/
+账户: admin
+密码: admin
+```
 
 - [X]  mysql文档管理
 - [X]  角色划分
