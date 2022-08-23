@@ -55,7 +55,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
         if (dbUser != null) {
             userDTO.setPassword(null);
             // 设置token
-            String token = TokenUtils.genToken(dbUser.getId(), dbUser.getPassword());
+            String token = TokenUtils.genToken(dbUser.getId(), dbUser.getUsername());
             userDTO.setToken(token);
             // ROLE_ADMIN
             String role = dbUser.getRole();
