@@ -1,5 +1,5 @@
 # 构建阶段
-FROM centos:7 as build
+FROM centos:8 as build
 WORKDIR /user/src/app
 COPY buildProject.sh .
 RUN sh buildProject.sh
@@ -15,7 +15,7 @@ RUN source /etc/profile \
     && cd ../ \
     && mvn clean package -Pmaster -DskipTests
 # 运行阶段
-FROM openjdk:11 as runtime
+FROM openjdk:17.0.2 as runtime
 WORKDIR /user/src/app
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ARG JAR_FILE=/user/src/app/screw/target/*.jar

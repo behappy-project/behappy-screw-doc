@@ -100,4 +100,33 @@ public class JDBCUtils {
         }
         return dsNames;
     }
+
+    public boolean initDatabase(String sql,String address, Integer port, String userName, String password){
+        //mysql
+        String driverName = "com.mysql.cj.jdbc.Driver";
+        String url = "jdbc:mysql://" + address + ":" + port + "/" + "mysql" + "?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&connectTimeout=10000";
+        Connection connection = null;
+        Statement stmt = null;
+        boolean success = false;
+        try {
+            Class.forName(driverName);
+            connection = DriverManager.getConnection(url, userName, password);
+            stmt = connection.createStatement();
+            success = stmt.executeUpdate(sql) > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return success;
+    }
 }

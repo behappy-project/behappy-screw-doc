@@ -2,13 +2,14 @@
 workdir=/opt/screw
 # 更新国内源
 yum -y install wget \
-  && wget http://mirrors.aliyun.com/repo/Centos-7.repo \
-  && mv Centos-7.repo CentOS-Base.repo \
+  && cp -a /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak \
+  && mv CentOS-Linux-AppStream.repo  CentOS-Linux-AppStream.repo.bak \
+  && mv CentOS-Linux-BaseOS.repo CentOS-Linux-BaseOS.repo.bak \
   && yum clean all \
   && yum makecache
 mkdir -p $workdir && cd $workdir
-# 下载jdk11
-yum install -y java-11-openjdk
+# 下载jdk17
+yum install -y java-17-openjdk
 # 下载node12.22.0
 wget https://npm.taobao.org/mirrors/node/v12.22.0/node-v12.22.0-linux-x64.tar.xz
 tar -xvf node-v12.22.0-linux-x64.tar.xz

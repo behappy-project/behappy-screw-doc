@@ -68,11 +68,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             if (matcher.matches()) {
                 Integer roleId = user.getRoleId();
                 List<String> databases = roleService.getRoleDatabasesById(roleId);
-                // /doc/mysql/sp_oe_easyepc.html
+                // /doc/${name}/xxx.html
                 String database = ScrewStrUtils.subStr(request.getRequestURI(), 3, "/", 1, ".html");
-                //if (!databases.contains(database)){
-                //    throw new ServiceException(ResStatus.CODE_401, "权限不足");
-                //}
+                if (!databases.contains(database)){
+                    throw new ServiceException(ResStatus.CODE_401, "权限不足");
+                }
             }
         } catch (ServiceException e) {
             redirectIndex(request,e.getCode(),e.getMessage());

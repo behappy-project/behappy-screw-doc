@@ -13,6 +13,7 @@ services:
       REDIS_PORT: 9000
       REDIS_PASSWORD: redis
       # datastore: mysql
+      DATASTORE_BASE: screw_doc_new
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306
       MYSQL_USERNAME: root
