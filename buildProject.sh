@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 workdir=/opt/screw
 # 更新国内源
+ls /etc/yum.repos.d
 yum -y install wget \
-  && cp -a /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak \
   && wget -O /etc/yum.repos.d/CentOS-Base.repo https://repo.huaweicloud.com/repository/conf/CentOS-8-reg.repo \
-  && ls /etc/yum.repos.d \
   && rm -rf /etc/yum.repos.d/CentOS-Linux-AppStream.repo \
   && rm -rf /etc/yum.repos.d/CentOS-Linux-BaseOS.repo \
   && yum clean all \
