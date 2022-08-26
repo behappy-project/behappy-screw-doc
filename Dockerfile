@@ -1,7 +1,7 @@
 # 构建阶段
 FROM centos:8 as build
 WORKDIR /user/src/app
-COPY buildProject.sh .
+COPY buildProject.sh CentOS-8-reg.repo ./
 RUN sh buildProject.sh
 COPY . .
 # 1.执行构建vue,2.执行构建maven

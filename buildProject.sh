@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 workdir=/opt/screw
 # 更新国内源
-ls /etc/yum.repos.d
-yum -y install wget \
-  && wget -O /etc/yum.repos.d/CentOS-Base.repo https://repo.huaweicloud.com/repository/conf/CentOS-8-reg.repo \
+mv CentOS-8-reg.repo /etc/yum.repos.d/CentOS-Base.repo \
   && rm -rf /etc/yum.repos.d/CentOS-Linux-AppStream.repo \
   && rm -rf /etc/yum.repos.d/CentOS-Linux-BaseOS.repo \
   && yum clean all \
-  && yum makecache
+  && yum makecache \
+  && yum -y install wget
 mkdir -p $workdir && cd $workdir
 # 下载jdk17
 yum install -y java-17-openjdk
