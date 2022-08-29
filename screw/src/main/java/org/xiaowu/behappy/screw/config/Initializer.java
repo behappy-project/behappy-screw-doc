@@ -7,6 +7,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.xiaowu.behappy.screw.common.db.util.JDBCUtils;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 /**
  * @author xiaowu
  * sql初始化
@@ -23,8 +26,9 @@ public class Initializer implements CommandLineRunner {
             create database if not exists %s;
             """;
 
-    private final static String INIT_TABLE = """
-            -- auto-generated definition
+    private final static String[] INIT_TABLE_ARR = new String[]{
+            """
+ -- auto-generated definition
             create table if not exists %s.sys_database
             (
                 id          int auto_increment comment 'id'
@@ -36,7 +40,9 @@ public class Initializer implements CommandLineRunner {
                 sort_num    int          null comment '排序'
             )
                 collate = utf8mb4_unicode_ci;
-            -- auto-generated definition
+""",
+            """
+-- auto-generated definition
             create table if not exists %s.sys_datasource
             (
                 id          int auto_increment comment 'id'
@@ -52,7 +58,9 @@ public class Initializer implements CommandLineRunner {
                 ignore_suffix        longtext null comment '忽略表后缀'
             )
                 collate = utf8mb4_unicode_ci;
-            -- auto-generated definition
+""",
+            """
+-- auto-generated definition
             create table if not exists %s.sys_role
             (
                 id          int auto_increment comment 'id'
@@ -64,7 +72,9 @@ public class Initializer implements CommandLineRunner {
                     unique (flag)
             )
                 collate = utf8mb4_unicode_ci;
-            -- auto-generated definition
+""",
+            """
+-- auto-generated definition
             create table if not exists %s.sys_role_database
             (
                 role_id     int not null comment '角色id',
@@ -72,7 +82,9 @@ public class Initializer implements CommandLineRunner {
                 primary key (role_id, database_id)
             )
                 comment '角色菜单关系表' collate = utf8mb4_unicode_ci;
-            -- auto-generated definition
+""",
+            """
+-- auto-generated definition
             create table if not exists %s.sys_user
             (
                 id          int auto_increment comment 'id'
@@ -88,7 +100,9 @@ public class Initializer implements CommandLineRunner {
                 role_id     int                                 null comment '供缓存查询'
             )
                 collate = utf8mb4_unicode_ci;
-            create table if not exists %s.sys_database_history
+""",
+            """
+create table if not exists %s.sys_database_history
             (
                 history_id int auto_increment
                     primary key,
@@ -99,7 +113,8 @@ public class Initializer implements CommandLineRunner {
                 update_user varchar(256) null
             )
                 comment '更新历史回溯';
-            """;
+"""
+    };
 
     private final static String INSERT_ROLE_ADMIN_SQL = """
             INSERT INTO sys_role (id, name, description, flag) VALUES (1, '管理员', '管理员', 'ROLE_ADMIN');
@@ -121,7 +136,6 @@ public class Initializer implements CommandLineRunner {
         String mysqlPort = System.getenv("MYSQL_PORT");
         String mysqlUsername = System.getenv("MYSQL_USERNAME");
         String mysqlPassword = System.getenv("MYSQL_PASSWORD");
-
         if (StrUtil.isBlank(datastoreBase)) {
             datastoreBase = DATASTORE_BASE;
         }
@@ -130,14 +144,14 @@ public class Initializer implements CommandLineRunner {
             System.exit(0);
         }
         String initDatabaseSql = INIT_DATABASE.replaceAll("%s", datastoreBase);
-        boolean success = JDBCUtils.initDatabase(initDatabaseSql,  mysqlHost, Integer.parseInt(mysqlPort), mysqlUsername, mysqlPassword);
+        boolean success = JDBCUtils.initDatabase(initDatabaseSql, mysqlHost, Integer.parseInt(mysqlPort), mysqlUsername, mysqlPassword);
         if (!success) {
             System.out.println("初始化数据库失败");
             System.exit(0);
         }
-        String initTableSql = INIT_TABLE.replaceAll("%s", datastoreBase);
-        jdbcTemplate.execute(initDatabaseSql);
-        jdbcTemplate.execute(initTableSql);
+        String finalDatastoreBase = datastoreBase;
+        String[] initTableSql = Arrays.stream(INIT_TABLE_ARR).map(str -> str.replaceAll("%s", finalDatastoreBase)).collect(Collectors.toList()).toArray(new String[INIT_TABLE_ARR.length]);
+        jdbcTemplate.batchUpdate(initTableSql);
         Integer roleAdminC = jdbcTemplate.queryForObject("select count(1) from sys_role where flag = 'ROLE_ADMIN'", Integer.class);
         Integer roleUserC = jdbcTemplate.queryForObject("select count(1) from sys_role where flag = 'ROLE_USER'", Integer.class);
         Integer adminC = jdbcTemplate.queryForObject("select count(1) from sys_user where username = 'admin'", Integer.class);
