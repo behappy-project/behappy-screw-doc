@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class TokenUtils {
 
-    private static final long TOKEN_EXPIRATION = 24 * 60;
+    private static final long TOKEN_EXPIRATION = 24 * 60 * 60 * 1000;
 
     private static final String TOKEN_SIGN_KEY = "60ea584a71754b7bb6128dc6c73f29d1";
 
