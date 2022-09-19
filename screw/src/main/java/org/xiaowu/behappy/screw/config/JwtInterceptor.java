@@ -1,6 +1,8 @@
 package org.xiaowu.behappy.screw.config;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -15,6 +17,8 @@ import org.xiaowu.behappy.screw.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -35,16 +39,20 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Autowired
     private RoleService roleService;
 
-    private static final Pattern pattern = Pattern.compile("^/doc/.*");
+    private static final Pattern PATTERN = Pattern.compile("^/doc/.*");
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        boolean isDocFlag = false;
+        PrintWriter writer = null;
         try {
             // 先从header获取token值
             String token = request.getHeader(CommonConstant.TOKEN);
+            // 如果header里没有token,说明是访问文档
             if (StrUtil.isBlank(token)) {
                 // 再尝试从param中获取
                 token = request.getParameter(CommonConstant.TOKEN);
+                isDocFlag = true;
             }
             // 执行认证
             // 如果仍然是空则说明未携带token
@@ -63,7 +71,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 throw new ServiceException(ResStatus.CODE_401, "用户不存在，请重新登录");
             }
             // 判断当前用户是否持有
-            Matcher matcher = pattern.matcher(request.getRequestURI());
+            Matcher matcher = PATTERN.matcher(request.getRequestURI());
             // 如果是以/doc开头的, 则查询当前用户是否有权限访问该数据库链接
             if (matcher.matches()) {
                 Integer roleId = user.getRoleId();
@@ -75,11 +83,26 @@ public class JwtInterceptor implements HandlerInterceptor {
                 }
             }
         } catch (ServiceException e) {
-            redirectIndex(request,e.getCode(),e.getMessage());
-            throw new RuntimeException(e);
+            if (isDocFlag) {
+                redirectIndex(request,e.getCode(),e.getMessage());
+                throw new RuntimeException(e);
+            }else {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.set("code",e.getCode());
+                jsonObject.set("msg",e.getMessage());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
+                response.setContentType("application/json; charset=utf-8");
+                writer = response.getWriter();
+                writer.append(JSONUtil.toJsonStr(jsonObject));
+                writer.flush();
+            }
         } catch (Exception e) {
-            redirectIndex(request,ResStatus.CODE_500,"未知错误");
+            redirectIndex(request,ResStatus.CODE_500,e.getMessage());
             throw new RuntimeException(e);
+        }finally {
+            if (writer != null){
+                writer.close();
+            }
         }
         return true;
     }
