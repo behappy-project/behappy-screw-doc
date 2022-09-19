@@ -17,6 +17,8 @@ import org.xiaowu.behappy.screw.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -42,6 +44,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         boolean isDocFlag = false;
+        PrintWriter writer = null;
         try {
             // 先从header获取token值
             String token = request.getHeader(CommonConstant.TOKEN);
@@ -85,12 +88,21 @@ public class JwtInterceptor implements HandlerInterceptor {
                 throw new RuntimeException(e);
             }else {
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.set(e.getCode(),e.getMessage());
-                response.getWriter().print(JSONUtil.toJsonStr(jsonObject));
+                jsonObject.set("code",e.getCode());
+                jsonObject.set("msg",e.getMessage());
+                response.setCharacterEncoding(StandardCharsets.UTF_8.displayName());
+                response.setContentType("application/json; charset=utf-8");
+                writer = response.getWriter();
+                writer.append(JSONUtil.toJsonStr(jsonObject));
+                writer.flush();
             }
         } catch (Exception e) {
             redirectIndex(request,ResStatus.CODE_500,e.getMessage());
             throw new RuntimeException(e);
+        }finally {
+            if (writer != null){
+                writer.close();
+            }
         }
         return true;
     }

@@ -2,12 +2,14 @@ package org.xiaowu.behappy.screw.common.core.util;
 
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.*;
+import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
+import org.xiaowu.behappy.screw.common.core.exception.ServiceException;
 
 import java.util.Date;
 
 public class TokenUtils {
 
-    private static final long TOKEN_EXPIRATION = 24 * 60 * 60 * 1000;
+    private static final long TOKEN_EXPIRATION = 24 * 60;
 
     private static final String TOKEN_SIGN_KEY = "60ea584a71754b7bb6128dc6c73f29d1";
 
@@ -18,7 +20,7 @@ public class TokenUtils {
      */
     public static String genToken(Integer userId, String userName) {
         String token = Jwts.builder()
-                .setSubject("YYGH-USER")
+                .setSubject("BEHAPPY")
                 .setExpiration(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                 .claim("userId", userId)
                 .claim("userName", userName)
@@ -29,23 +31,31 @@ public class TokenUtils {
     }
 
     public static Integer getUserId(String token) {
-        if (StrUtil.isEmpty(token)) {
-            return null;
+        try {
+            if (StrUtil.isEmpty(token)) {
+                return null;
+            }
+            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(TOKEN_SIGN_KEY).parseClaimsJws(token);
+            Claims claims = claimsJws.getBody();
+            Integer userId = (Integer) claims.get("userId");
+            return userId;
+        } catch (Exception e) {
+            throw new ServiceException(ResStatus.CODE_401,e.getMessage());
         }
-        Jws<Claims> claimsJws = Jwts.parser().setSigningKey(TOKEN_SIGN_KEY).parseClaimsJws(token);
-        Claims claims = claimsJws.getBody();
-        Integer userId = (Integer) claims.get("userId");
-        return userId;
     }
 
     public static String getUserName(String token) {
-        if (StrUtil.isEmpty(token)) {
-            return "";
+        try {
+            if (StrUtil.isEmpty(token)) {
+                return "";
+            }
+            Jws<Claims> claimsJws
+                    = Jwts.parser().setSigningKey(TOKEN_SIGN_KEY).parseClaimsJws(token);
+            Claims claims = claimsJws.getBody();
+            return (String) claims.get("userName");
+        } catch (Exception e) {
+            throw new ServiceException(ResStatus.CODE_401,e.getMessage());
         }
-        Jws<Claims> claimsJws
-                = Jwts.parser().setSigningKey(TOKEN_SIGN_KEY).parseClaimsJws(token);
-        Claims claims = claimsJws.getBody();
-        return (String) claims.get("userName");
     }
 
 }
