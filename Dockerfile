@@ -22,4 +22,4 @@ ARG JAR_FILE=/user/src/app/screw/target/*.jar
 ENV JAVA_OPTS="-Xms128m -Xmx256m -Dfile.encoding=UTF-8 -Djava.security.egd=file:/dev/./urandom" \
     NODE_ENV="production"
 COPY --from=build ${JAR_FILE} app.jar
-ENTRYPOINT ["sh","-c","java -jar app.jar ${JAVA_OPTS}"]
+ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} -jar app.jar"]
