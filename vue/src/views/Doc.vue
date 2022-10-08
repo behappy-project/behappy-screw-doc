@@ -17,6 +17,8 @@
             :value="item">
         </el-option>
       </el-select>
+      <el-input style="width: 200px" placeholder="请输入数据库名称" suffix-icon="el-icon-search" class="ml-5"
+                v-model="searchDatabase"></el-input>
       <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
       <el-button type="warning" @click="reset">重置</el-button>
     </div>
@@ -133,6 +135,7 @@ export default {
     return {
       serverIp,
       tableData: [],
+      searchDatabase: '',
       databaseHistory: [],
       total: 0,
       pageNum: 1,
@@ -181,7 +184,8 @@ export default {
         pageSize: this.pageSize,
         name: this.name,
         dataSource: this.value,
-        role: this.user.role
+        role: this.user.role,
+        database: this.searchDatabase
       }).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -235,6 +239,7 @@ export default {
       if (this.dsNames.length !== 0) {
         this.name = this.dsNames[0]
       }
+      this.searchDatabase = ''
       this.load()
     },
     handleSizeChange(pageSize) {
