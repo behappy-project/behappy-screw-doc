@@ -15,7 +15,8 @@ public interface DatabaseMapper extends BaseMapper<Database> {
     Page<Database> pageDatabase(Page<Database> page,
                                 @Param("flag") String flag,
                                 @Param("datasource") String datasource,
-                                @Param("name") String name);
+                                @Param("name") String name,
+                                @Param("database") String database);
 
 
     List<Database> findDbsOrderBySortNum(@Param("name") String name);

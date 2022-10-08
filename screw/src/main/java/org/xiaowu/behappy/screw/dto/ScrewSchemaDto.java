@@ -25,6 +25,12 @@ public class ScrewSchemaDto {
      */
     private String name;
 
+
+    /**
+     * 数据库名称
+     */
+    private String database;
+
     Integer pageNum;
 
     Integer pageSize;

@@ -12,7 +12,7 @@
     </resultMap>
 
     <select id="pageDatabase" resultMap="database">
-        select sd.*
+        select distinct sd.*
         from (select child.id, child.name, child.icon, child.description
               from sys_database child
                        join
@@ -27,6 +27,9 @@
                 </if>
                 <if test="name != null and name != ''">
                     and sdc.name = #{name}
+                </if>
+                <if test="database != null and database != ''">
+                    and child.name = #{database}
                 </if>) sd
                  join sys_role_database srd on sd.id = srd.database_id
                  join sys_role sr on srd.role_id = sr.id

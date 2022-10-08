@@ -61,7 +61,8 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
         Page<Database> screwDatabaseVos = baseMapper.pageDatabase(new Page<>(screwSchemaDto.getPageNum(), screwSchemaDto.getPageSize()),
                 screwSchemaDto.getRole(),
                 screwSchemaDto.getDataSource().getDatasource(),
-                screwSchemaDto.getName());
+                screwSchemaDto.getName(),
+                screwSchemaDto.getDatabase());
         List<Database> records = screwDatabaseVos.getRecords();
         for (Database record : records) {
             record.setDsName(screwSchemaDto.getName());
