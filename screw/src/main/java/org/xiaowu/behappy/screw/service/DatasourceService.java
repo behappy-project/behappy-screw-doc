@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
 import org.xiaowu.behappy.screw.common.db.util.JDBCUtils;
 import org.xiaowu.behappy.screw.dto.CheckConnDto;
@@ -59,12 +60,12 @@ public class DatasourceService extends ServiceImpl<DatasourceMapper, Datasource>
             databaseType = "1";
         }
         List<String> allDbNames = JDBCUtils.getAllDbNames(databaseType, dbDatasource.getAddr(), dbDatasource.getPort(), dbDatasource.getUsername(), dbDatasource.getPassword());
+
         List<String> dbNames = databaseService.list(new LambdaQueryWrapper<Database>()
                         .select(Database::getName)
-                        .isNotNull(Database::getPid))
-                .stream().map(Database::getName)
-                .collect(Collectors.toList());
-        allDbNames.removeIf(selName -> dbNames.contains(selName));
+                        .eq(Database::getPid, pid))
+                .stream().map(Database::getName).toList();
+        allDbNames.removeIf(dbNames::contains);
         List<Database> databases = new ArrayList<>();
         for (String dbName : allDbNames) {
             Database database = new Database();
