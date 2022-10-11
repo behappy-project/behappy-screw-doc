@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -22,6 +23,7 @@ import org.xiaowu.behappy.screw.util.ScrewUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
  * @author xiaowu
  */
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> implements IService<Database> {
 
     private final DatabaseHistoryMapper databaseHistoryMapper;
@@ -38,6 +40,8 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
     private final HttpServletRequest httpServletRequest;
 
     private final DatasourceService datasourceService;
+
+    private final RoleDatabaseService roleDatabaseService;
 
     public List<Database> findDbs(String name) {
         // 查询所有数据
@@ -47,7 +51,10 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
         // 找出一级菜单的子菜单
         for (Database menu : parentNodes) {
             // 筛选所有数据中pid=父级id的数据就是二级菜单
-            menu.setChildren(list.stream().filter(m -> menu.getId().equals(m.getPid())).collect(Collectors.toList()));
+            menu.setChildren(list.stream().filter(m -> menu.getId().equals(m.getPid()))
+                    .sorted(Comparator.comparingInt(o -> Integer.parseInt(o.getSortNum())))
+                    .sorted(Comparator.comparingInt(Database::getId))
+                    .collect(Collectors.toList()));
         }
         return parentNodes;
     }
@@ -107,16 +114,19 @@ public class DatabaseService extends ServiceImpl<DatabaseMapper, Database> imple
         Database dbDatabase = getById(id);
         List<Integer> ids = new ArrayList<>();
         // 父级菜单
-        if (dbDatabase.getPid() == null){
+        if (dbDatabase.getPid() == null) {
             LambdaQueryWrapper<Database> wrapper = new LambdaQueryWrapper<>();
             wrapper.select(Database::getId);
-            wrapper.eq(Database::getPid,id);
+            wrapper.eq(Database::getPid, id);
             List<Database> list = list(wrapper);
-            if (!CollectionUtils.isEmpty(list)){
+            if (!CollectionUtils.isEmpty(list)) {
                 ids = list.stream().map(Database::getId).collect(Collectors.toList());
             }
         }
         ids.add(id);
-        removeBatchByIds(ids);
+        if (removeBatchByIds(ids)) {
+            // 删除role-database关联表数据
+            roleDatabaseService.removeByDatabaseId(ids);
+        }
     }
 }

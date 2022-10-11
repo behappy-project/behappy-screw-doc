@@ -183,7 +183,6 @@ export default {
       this.request.post("/datasource/check-conn", this.form).then(res => {
         if (res.code === '200' && res.data === true) {
           this.$message.success("测试连接成功")
-          this.load()
         } else {
           this.$message.error("测试连接失败")
         }
