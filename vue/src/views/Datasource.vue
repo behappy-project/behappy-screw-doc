@@ -169,6 +169,7 @@ export default {
             if (res.code === '200') {
               this.$message.success("保存成功")
               this.dialogFormVisible = false
+              this.form = {}
               this.load()
             } else {
               this.$message.error("保存失败")
