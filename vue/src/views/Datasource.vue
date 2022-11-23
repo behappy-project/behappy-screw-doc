@@ -145,7 +145,7 @@ export default {
       this.request.get("/datasource", {
         params: {
           dataSource: this.value,
-          name: this.form.name,
+          name: this.dsName,
         }
       }).then(res => {
         this.tableData = res.data
@@ -169,7 +169,6 @@ export default {
             if (res.code === '200') {
               this.$message.success("保存成功")
               this.dialogFormVisible = false
-              this.form = {}
               this.load()
             } else {
               this.$message.error("保存失败")
