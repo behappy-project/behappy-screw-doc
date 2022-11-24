@@ -39,7 +39,7 @@ public class DatasourceController {
      */
     @DeleteMapping("/{id}")
     public Result del(@PathVariable Integer id) {
-        return Result.success(datasourceService.removeById(id));
+        return datasourceService.del(id);
     }
 
 

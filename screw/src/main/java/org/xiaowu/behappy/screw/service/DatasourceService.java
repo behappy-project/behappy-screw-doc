@@ -8,7 +8,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.common.core.util.Result;
 import org.xiaowu.behappy.screw.common.db.util.JDBCUtils;
 import org.xiaowu.behappy.screw.dto.CheckConnDto;
 import org.xiaowu.behappy.screw.entity.Database;
@@ -75,5 +77,19 @@ public class DatasourceService extends ServiceImpl<DatasourceMapper, Datasource>
             databases.add(database);
         }
         databaseService.saveBatch(databases);
+    }
+
+    public Result del(Integer id) {
+        DatabaseService databaseService = SpringUtil.getBean(DatabaseService.class);
+        Datasource datasource = this.getById(id);
+        if (Objects.isNull(datasource)) {
+            return Result.error(ResStatus.CODE_400, "数据源不存在");
+        }
+        Database database = databaseService.getOne(new LambdaQueryWrapper<Database>()
+                .eq(Database::getName, datasource.getName()));
+        if (Objects.nonNull(database)) {
+            return Result.error(ResStatus.CODE_500, "当前数据源下尚存数据库配置信息");
+        }
+        return Result.success(this.removeById(id));
     }
 }
