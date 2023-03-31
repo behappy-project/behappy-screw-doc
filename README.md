@@ -1,3 +1,6 @@
+## 技术沟通群
+<img src="https://raw.githubusercontent.com/wang-xiaowu/picture_repository/master/behappy_group.jpg" width="300px">
+
 ### 背景
 
 > 在日常开发中, 伴随着许许多多的文档
