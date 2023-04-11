@@ -1,3 +1,6 @@
+> 欢迎“一键三连[watch,fork,star]”
+> 
+> 如果有对该项目感兴趣的小伙伴，可以联系我，大家一起研究
 ## 技术沟通群
 <img src="https://raw.githubusercontent.com/wang-xiaowu/picture_repository/master/behappy_group.jpg" width="300px">
 
@@ -23,16 +26,18 @@
 
 ### 部署方式
 
-- Docker-compose部署, 可以直接使用docker-compose文件部署(先修改环境变量)
+- Docker-compose部署
 
 ```
+# 下载docker-compose文件，修改environment部分。具体含义见注释，然后执行以下命令
 docker-compose up -d
 ```
 
 - Docker部署
 
 ```
-# docker run -d --name behappy-screw-doc --privileged=true --restart=no -p 8999:8080 -v /opt/dbdoc/doc:/user/src/app/doc wangxiaowu950330/behappy-screw-doc:latest
+# 执行以下命令（记得指定环境变量）
+docker run -d --name behappy-screw-doc --privileged=true --restart=no -p 8999:8080 -v /opt/dbdoc/doc:/user/src/app/doc wangxiaowu950330/behappy-screw-doc:latest
 ```
 
 ### 使用方式
