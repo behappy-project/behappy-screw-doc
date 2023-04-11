@@ -7,12 +7,12 @@ services:
     image: wangxiaowu950330/behappy-screw-doc:latest
     # 自定义环境变量
     environment:
-      # 缓存方式,如果是caffeine,redis配置可不配
+      # 缓存方式,默认为caffeine
       CACHE_TYPE: caffeine
-      REDIS_HOST: 127.0.0.1
-      REDIS_PORT: 9000
-      REDIS_PASSWORD: redis
-      # datastore: mysql
+      # REDIS_HOST: 127.0.0.1
+      # REDIS_PORT: 9000
+      # REDIS_PASSWORD: redis
+      # 服务本身数据源（mysql）
       DATASTORE_BASE: screw_doc_new
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306
@@ -21,4 +21,5 @@ services:
     ports:
       - "8999:8080"
     volumes:
+      # 默认每个数据库生成的html会放在容器内的/user/src/app/doc下，这里将其挂载到宿主机的/opt/dbdoc/doc
       - /opt/dbdoc/doc:/user/src/app/doc
