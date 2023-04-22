@@ -1,6 +1,19 @@
 server:
   port: 8080
 spring:
+  profiles:
+    active: @profiles.active@
+  ldap:
+    urls: ['ldap://localhost:388']
+    base: dc=extension,dc=net
+    username: cn=admin,${spring.ldap.base}
+    password: 123456
+    base-environment:
+      java:
+        naming:
+          ldap:
+            attributes:
+              binary: objectGUID
   # 如果需要使用redis,将此处注释打开
   redis:
     host: ${REDIS_HOST:127.0.0.1}

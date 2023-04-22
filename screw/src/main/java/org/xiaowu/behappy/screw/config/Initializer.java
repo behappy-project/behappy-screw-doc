@@ -2,6 +2,7 @@ package org.xiaowu.behappy.screw.config;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -139,9 +140,17 @@ create table if not exists %s.sys_database_history
         if (StrUtil.isBlank(datastoreBase)) {
             datastoreBase = DATASTORE_BASE;
         }
-        if (StrUtil.isBlank(mysqlHost) || StrUtil.isBlank(mysqlPort) || StrUtil.isBlank(mysqlUsername) || StrUtil.isBlank(mysqlPassword)) {
-            System.out.println("MYSQL_HOST,MYSQL_PORT,MYSQL_USERNAME,MYSQL_PASSWORD参数必填");
-            System.exit(0);
+        if (StrUtil.isBlank(mysqlHost)) {
+            mysqlHost = "127.0.0.1";
+        }
+        if (StrUtil.isBlank(mysqlPort)) {
+            mysqlPort = "3306";
+        }
+        if (StrUtil.isBlank(mysqlUsername)) {
+            mysqlUsername = "root";
+        }
+        if (StrUtil.isBlank(mysqlPassword)) {
+            mysqlPassword = "root";
         }
         String initDatabaseSql = INIT_DATABASE.replaceAll("%s", datastoreBase);
         boolean success = JDBCUtils.initDatabase(initDatabaseSql, mysqlHost, Integer.parseInt(mysqlPort), mysqlUsername, mysqlPassword);
