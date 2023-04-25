@@ -7,6 +7,7 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,12 @@ public class TestLdapService {
         System.out.println(ldapUser);
     }
 
+
+    public boolean authenticate(String loginName, String password) {
+        EqualsFilter filter = new EqualsFilter("uid", loginName);
+        return ldapTemplate.authenticate("", filter.toString(), password);
+    }
+
     public void authenticationTest() {
         String uid = "xiaowu";
         LdapUser authenticate = ldapTemplate.authenticate(
@@ -67,13 +74,13 @@ public class TestLdapService {
         }
     }
 
-    public void findUserByQuery(){
-        ContainerCriteria query = LdapQueryBuilder.query()
-                .where("uid")
-                .is("xiaowu")
-                .and(LdapQueryBuilder.query()
-                        .where("userPassword")
-                        .is("123456"));
+    public void findUserByQuery(ContainerCriteria query){
+//        ContainerCriteria query = LdapQueryBuilder.query()
+//                .where("uid")
+//                .is("xiaowu")
+//                .and(LdapQueryBuilder.query()
+//                        .where("userPassword")
+//                        .is("123456"));
         List<User> list = ldapTemplate.search(query,
                 (AttributesMapper<User>) attrs -> {
                     User ldapUser = new User();

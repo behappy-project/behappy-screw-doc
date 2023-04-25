@@ -93,7 +93,6 @@ router.beforeEach((to, from, next) => {
     // 判断是否登陆
     const token = localStorage.getItem("user")
     if (!token) {
-        console.log(to.matched)
         if (to.matched.some(metadata => paths.includes(metadata.path))) {
             next()
         }

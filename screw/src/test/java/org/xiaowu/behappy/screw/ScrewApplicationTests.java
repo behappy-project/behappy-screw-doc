@@ -39,7 +39,13 @@ class ScrewApplicationTests {
     void testLdap(){
 //        testLdapService.findUser();
 //        testLdapService.findUserByQuery();
-        testLdapService.findUserByQuery();
+
+//        ContainerCriteria query = LdapQueryBuilder.query()
+//                .where("uid")
+//                .is("xiaowu");
+//        testLdapService.findUserByQuery(query);
+
+        System.out.println(testLdapService.authenticate("xiaowu", "asdasd"));
     }
 
 }

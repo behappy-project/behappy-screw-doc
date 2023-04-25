@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
@@ -52,12 +53,12 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
     private final LdapTemplate ldapTemplate;
 
-    @CachePut(value = CacheConstants.USER_CACHE, key="#user.id")
+    @CachePut(value = CacheConstants.USER_CACHE, key = "#user.id")
     public User saveUser(User user) {
         return user;
     }
 
-    private List<User> findUserByQuery(ContainerCriteria query){
+    private List<User> findUserByQuery(ContainerCriteria query) {
         return ldapTemplate.search(query,
                 (AttributesMapper<User>) attrs -> {
                     User ldapUser = new User();
@@ -72,34 +73,49 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
                 });
     }
 
+    private boolean authenticate(String loginName, String password) {
+        EqualsFilter filter = new EqualsFilter("uid", loginName);
+        return ldapTemplate.authenticate("", filter.toString(), password);
+    }
+
     public UserDto login(UserDto userDTO) {
         User dbUser = null;
         // ldap方式登录
         if (userDTO.getLdapFlag()) {
-            ContainerCriteria query = LdapQueryBuilder.query()
-                    .where("uid")
-                    .is(userDTO.getUsername())
-                    .and(LdapQueryBuilder.query()
-                            .where("userPassword")
-                            .is(userDTO.getPassword()));
-            List<User> userList = findUserByQuery(query);
-            if (!CollectionUtils.isEmpty(userList)){
-                dbUser = userList.get(0);
-                userDTO.setPassword(dbUser.getPassword());
-                // 校验数据库是否包含此user数据，如果没有则save
-                if (getUserInfo(userDTO) == null) {
-                    UserService userService = applicationContext.getBean(UserService.class);
-                    // 默认普通用户角色
-                    dbUser.setRole(RoleEnum.ROLE_USER.toString());
-                    dbUser.setRoleId(RoleEnum.ROLE_USER.getId());
-                    userService.saveOrUpdate(dbUser);
-                    userService.saveUser(dbUser);
+            if (authenticate(userDTO.getUsername(), userDTO.getPassword())) {
+                ContainerCriteria query = LdapQueryBuilder.query()
+                        .where("uid")
+                        .is(userDTO.getUsername());
+                List<User> userList = findUserByQuery(query);
+                if (!CollectionUtils.isEmpty(userList)) {
+                    // 用户密码 md5加密
+                    userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
+                    // 校验数据库是否包含此user数据，如果没有则save
+                    LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+                    queryWrapper.eq(User::getUsername, userDTO.getUsername());
+                    queryWrapper.eq(User::getLoginType, LoginType.LDAP);
+                    User userInfo = getUserInfo(queryWrapper);
+                    if (userInfo == null) {
+                        dbUser = userList.get(0);
+                        UserService userService = applicationContext.getBean(UserService.class);
+                        // 默认普通用户角色
+                        dbUser.setRole(RoleEnum.ROLE_USER.toString());
+                        dbUser.setRoleId(RoleEnum.ROLE_USER.getId());
+                        userService.saveOrUpdate(dbUser);
+                        userService.saveUser(dbUser);
+                    } else {
+                        dbUser = userInfo;
+                    }
                 }
             }
-        }else {
+        } else {
             // 用户密码 md5加密
             userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
-            dbUser = getUserInfo(userDTO);
+            LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(User::getUsername, userDTO.getUsername());
+            queryWrapper.eq(User::getPassword, userDTO.getPassword());
+            queryWrapper.eq(User::getLoginType, LoginType.DATABASE);
+            dbUser = getUserInfo(queryWrapper);
         }
         if (dbUser != null) {
             userDTO.setPassword(null);
@@ -123,7 +139,11 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     public User register(UserDto userDTO) {
         // 用户密码 md5加密
         userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
-        User one = getUserInfo(userDTO);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, userDTO.getUsername());
+        queryWrapper.eq(User::getPassword, userDTO.getPassword());
+        queryWrapper.eq(User::getLoginType, LoginType.DATABASE);
+        User one = getUserInfo(queryWrapper);
         if (one == null) {
             one = new User();
             BeanUtil.copyProperties(userDTO, one, true);
@@ -152,15 +172,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
         return userMapper.findPage(page, username, email, address);
     }
 
-    private User getUserInfo(UserDto userDTO) {
-        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(User::getUsername, userDTO.getUsername());
-        queryWrapper.eq(User::getPassword, userDTO.getPassword());
-        if (userDTO.getLdapFlag()) {
-            queryWrapper.eq(User::getLoginType, LoginType.LDAP);
-        }else {
-            queryWrapper.eq(User::getLoginType, LoginType.DATABASE);
-        }
+    private User getUserInfo(LambdaQueryWrapper<User> queryWrapper) {
         User one;
         try {
             // 从数据库查询用户信息
@@ -173,6 +185,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
     /**
      * 赋值当前角色的菜单列表
+     *
      * @param userDTO
      * @return
      */
@@ -198,7 +211,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     }
 
 
-    @Cacheable(value = CacheConstants.USER_CACHE,key = "#id")
+    @Cacheable(value = CacheConstants.USER_CACHE, key = "#id")
     public User findByUserId(Integer id) {
         return getById(id);
     }
