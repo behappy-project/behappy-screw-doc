@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.xiaowu</groupId>
     <artifactId>behappy-screw-doc</artifactId>
-    <version>1.0.0</version>
+    <version>v2.1.0</version>
     <name>behappy-screw-doc</name>
     <packaging>pom</packaging>
     <description>behappy-screw-doc,数据库文档管理</description>
