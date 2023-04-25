@@ -5,7 +5,7 @@ spring:
     active: @profiles.active@
   ldap:
     urls:
-      - ${LDAP_URLS:ldap://127.0.0.1:389}
+      - ${LDAP_URL:ldap://127.0.0.1:389}
     base: ${LDAP_BASE:dc=extension,dc=net}
     username: ${LDAP_USERNAME:cn=admin,dc=extension,dc=net}
     password: ${LDAP_PASSWORD:123456}
