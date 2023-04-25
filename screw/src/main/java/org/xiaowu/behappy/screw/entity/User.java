@@ -1,8 +1,6 @@
 package org.xiaowu.behappy.screw.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,6 +26,7 @@ public class User implements Serializable {
 
     private String address;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     private String avatarUrl;
@@ -36,4 +35,8 @@ public class User implements Serializable {
 
     private Integer roleId;
 
+    /**
+     * @see LoginType
+     */
+    private LoginType loginType;
 }

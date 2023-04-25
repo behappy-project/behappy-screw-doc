@@ -10,7 +10,7 @@ import org.xiaowu.behappy.screw.entity.User;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-//@SpringBootTest
+@SpringBootTest
 class ScrewApplicationTests {
 
     @Autowired
@@ -18,6 +18,9 @@ class ScrewApplicationTests {
 
     @Autowired
     private TestCacheService testCacheService;
+
+    @Autowired
+    private TestLdapService testLdapService;
 
     @SneakyThrows
     @Test
@@ -29,6 +32,14 @@ class ScrewApplicationTests {
         User cacheUser = testCacheService.getCacheUser(user.getId());
         System.out.println(cacheManager.getCacheNames());
         System.out.println(cacheUser);
+    }
+
+
+    @Test
+    void testLdap(){
+//        testLdapService.findUser();
+//        testLdapService.findUserByQuery();
+        testLdapService.findUserByQuery();
     }
 
 }

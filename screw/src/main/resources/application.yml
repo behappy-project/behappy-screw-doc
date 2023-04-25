@@ -4,10 +4,11 @@ spring:
   profiles:
     active: @profiles.active@
   ldap:
-    urls: ['ldap://localhost:388']
-    base: dc=extension,dc=net
-    username: cn=admin,${spring.ldap.base}
-    password: 123456
+    urls:
+      - ${LDAP_URLS:ldap://127.0.0.1:389}
+    base: ${LDAP_BASE:dc=extension,dc=net}
+    username: ${LDAP_USERNAME:cn=admin,dc=extension,dc=net}
+    password: ${LDAP_PASSWORD:123456}
     base-environment:
       java:
         naming:
@@ -32,3 +33,7 @@ mybatis-plus:
     banner: false
   type-aliases-package: org.xiaowu.behappy.screw.entity
   mapper-locations: classpath:mapper/*.xml
+  type-enums-package: org.xiaowu.behappy.screw.entity
+  configuration:
+    # handler配置可以省略不写，默认就是这个
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler

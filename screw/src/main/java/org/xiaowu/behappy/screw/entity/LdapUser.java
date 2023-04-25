@@ -7,11 +7,15 @@ import org.springframework.ldap.odm.annotations.DnAttribute;
 import org.springframework.ldap.odm.annotations.Entry;
 import org.springframework.ldap.odm.annotations.Id;
 
-import javax.lang.model.element.Name;
+import javax.naming.Name;
 
+/**
+ * todo LdapUser未用到
+ * @author xiaowu
+ */
 @Data
 @ToString
-@Entry(base = "ou=people,dc=haohaozhu,dc=com", objectClasses = "inetOrgPerson")
+@Entry(base = "ou=people,dc=extension,dc=net", objectClasses = "inetOrgPerson")
 public class LdapUser {
 
     @Id
@@ -29,13 +33,34 @@ public class LdapUser {
     @Attribute(name="mail")
     private String mail;
 
-    @Attribute(name = "homedirectory")
-    private String homeDirectory;
+    @Attribute(name="employeeNumber")
+    private String employeeNumber;
 
-    @Attribute(name = "gidnumber")
-    private String gidNumber;
+    @Attribute(name="mobile")
+    private String mobile;
 
-    @Attribute(name = "uidnumber")
-    private String uidNumber;
+    @Attribute(name="postalAddress")
+    private String postalAddress;
+
+    @Attribute(name="description")
+    private String description;
+
+    @Attribute(name="objectClass")
+    private String objectClass;
+
+    @Attribute(name="userPassword")
+    private String userPassword;
+
+    @Attribute(name="businessCategory")
+    private String businessCategory;
+
+    @Attribute(name="givenName")
+    private String givenName;
+
+    @Attribute(name="displayName")
+    private String displayName;
+
+    @Attribute(name="departmentNumber")
+    private String departmentNumber;
 
 }

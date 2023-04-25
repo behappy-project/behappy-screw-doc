@@ -20,4 +20,5 @@ public class UserDto {
     private String role;
     private Integer roleId;
     private List<Database> databases;
+    private Boolean ldapFlag = Boolean.FALSE;
 }

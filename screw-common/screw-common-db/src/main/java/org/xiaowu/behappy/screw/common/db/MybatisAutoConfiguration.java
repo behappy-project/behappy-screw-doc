@@ -17,6 +17,7 @@
 package org.xiaowu.behappy.screw.common.db;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -31,6 +32,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.xiaowu.behappy.screw.common.db.config.MyMetaObjectHandler;
 import org.xiaowu.behappy.screw.common.db.resolver.SqlFilterArgumentResolver;
 
 import java.util.List;
@@ -84,4 +86,8 @@ public class MybatisAutoConfiguration implements WebMvcConfigurer {
         return interceptor;
     }
 
+    @Bean
+    public MetaObjectHandler metaObjectHandler() {
+        return new MyMetaObjectHandler();
+    }
 }

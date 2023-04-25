@@ -11,9 +11,10 @@
           <el-input size="medium" style="margin: 10px 0" prefix-icon="el-icon-lock" show-password
                     v-model="user.password"></el-input>
         </el-form-item>
-        <el-form-item style="margin: 10px 0; text-align: right">
-          <el-button type="warning" size="small" autocomplete="off" @click="$router.push('/register')">注册</el-button>
-          <el-button type="primary" size="small" autocomplete="off" @click="login">登录</el-button>
+        <el-form-item style="margin: 10px 0; display: flex; align-items: center; justify-content: space-between;">
+            <el-checkbox v-model="user.ldapFlag" style="margin-right: 120px;">LDAP</el-checkbox>
+            <el-button type="warning" size="small" autocomplete="off" @click="$router.push('/register')">注册</el-button>
+            <el-button type="primary" size="small" autocomplete="off" @click="login">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
