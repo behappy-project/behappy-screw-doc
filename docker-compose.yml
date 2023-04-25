@@ -12,8 +12,8 @@ services:
       # REDIS_HOST: 127.0.0.1
       # REDIS_PORT: 9000
       # REDIS_PASSWORD: redis
-      # 服务本身数据源（mysql）
-      DATASTORE_BASE: screw_doc_new
+      # 服务本身数据持久化（mysql）
+      DATASTORE_BASE: screw_doc
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306
       MYSQL_USERNAME: root
@@ -21,5 +21,5 @@ services:
     ports:
       - "8999:8080"
     volumes:
-      # 默认每个数据库生成的html会放在容器内的/user/src/app/doc下，这里将其挂载到宿主机的/opt/dbdoc/doc
+      # 默认每个数据库生成的html会放在容器内的/user/src/app/doc下，这里将其挂载到宿主机的/opt/dbdoc/doc，你可以自定义挂载宿主机的文件位置
       - /opt/dbdoc/doc:/user/src/app/doc

@@ -16,20 +16,18 @@
 
 ### 目标
 
-> 整合现有数据库(mysql/clickhouse), 做好文档规范
+> 整合现有数据库(支持mysql/clickhouse), 做好文档规范
 >
-> 新人辅导向, 该项目可以达到更直观的数据库关系查看
+> 新人辅导向, 该平台可以更直观的查看数据库关系
 >
 > 方便开发人员的定期review
 
-### 首先需要一个mysql数据库,并配置对应的环境变量,环境变量含义可见: https://hub.docker.com/repository/docker/wangxiaowu950330/behappy-screw-doc
-
-### 部署方式
+### 部署方式(目前仅支持容器化部署)
 
 - Docker-compose部署
 
 ```
-# 下载docker-compose文件，修改environment部分。具体含义见注释，然后执行以下命令
+# 下载./docker-compose文件，修改environment部分。具体含义见注释，然后执行以下命令
 docker-compose up -d
 ```
 
@@ -85,13 +83,12 @@ http://xxx:8999/
 ```
 
 - [X]  mysql文档管理
-- [X]  角色划分
 - [X]  clickhouse文档管理
-- [X]  redis缓存(适用在分布式环境部署)和caffeine进程缓存(适用在单机)两种方式
-- [X]  容器化
-- [X]  以/doc开头的访问地址解析token,并判断当前角色是否允许访问
+- [X]  角色划分
+- [X]  容器化支持
 - [X]  数据更改后,可进行历史回溯
 - [X]  手动初始化数据库数据改为自动初始化
+- [X]  支持ldap登录
 
 ### 注: 当前项目支持两种数据库, mysql和clickhouse, 但clickhouse因为screw原作者还未合代码, 所以如果是需要本地开发的话, 需要手动执行下此命令将jar包安装到本地库
 

@@ -9,6 +9,7 @@
     </div>
 
     <div style="margin: 10px 0">
+      <el-button type="primary" @click="handleAdd">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
       <el-popconfirm
           confirm-button-text='确定'
           cancel-button-text='我再想想'
@@ -16,6 +17,7 @@
           icon-color="red"
           title="您确定批量删除这些数据吗？"
           @confirm="delBatch"
+          class="ml-5"
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
@@ -34,6 +36,7 @@
       <el-table-column prop="email" label="邮箱"></el-table-column>
       <el-table-column prop="phone" label="电话"></el-table-column>
       <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table-column prop="loginType" label="登录类型"></el-table-column>
       <el-table-column label="操作"  width="500" align="center">
         <template slot-scope="scope">
           <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
@@ -136,7 +139,11 @@ export default {
       })
     },
     save() {
-      this.form.roleId = this.user.roleId
+      this.roles.forEach(role => {
+          if (role.flag === this.form.role) {
+              this.form.roleId = role.id
+          }
+      })
       this.request.post("/user", this.form).then(res => {
         if (res.code === '200') {
           this.$message.success("保存成功")
@@ -150,6 +157,10 @@ export default {
     handleEdit(row) {
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogFormVisible = true
+    },
+    handleAdd() {
+        this.form = {}
+        this.dialogFormVisible = true
     },
     del(id) {
       this.request.delete("/user/" + id).then(res => {

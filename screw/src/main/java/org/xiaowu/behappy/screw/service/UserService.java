@@ -2,7 +2,7 @@ package org.xiaowu.behappy.screw.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.SecureUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,7 +10,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
+import org.springframework.ldap.core.AttributesMapper;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.query.ContainerCriteria;
+import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.xiaowu.behappy.screw.common.cache.constants.CacheConstants;
 import org.xiaowu.behappy.screw.common.core.constant.ResStatus;
 import org.xiaowu.behappy.screw.common.core.enums.RoleEnum;
@@ -19,6 +25,7 @@ import org.xiaowu.behappy.screw.common.core.util.TokenUtils;
 import org.xiaowu.behappy.screw.dto.UserDto;
 import org.xiaowu.behappy.screw.dto.UserPasswordDto;
 import org.xiaowu.behappy.screw.entity.Database;
+import org.xiaowu.behappy.screw.entity.LoginType;
 import org.xiaowu.behappy.screw.entity.User;
 import org.xiaowu.behappy.screw.mapper.RoleDatabaseMapper;
 import org.xiaowu.behappy.screw.mapper.UserMapper;
@@ -41,17 +48,59 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
     private final CacheManager cacheManager;
 
+    private final ApplicationContext applicationContext;
+
+    private final LdapTemplate ldapTemplate;
+
     @CachePut(value = CacheConstants.USER_CACHE, key="#user.id")
     public User saveUser(User user) {
-        super.saveOrUpdate(user);
         return user;
     }
 
+    private List<User> findUserByQuery(ContainerCriteria query){
+        return ldapTemplate.search(query,
+                (AttributesMapper<User>) attrs -> {
+                    User ldapUser = new User();
+                    ldapUser.setUsername((String) attrs.get("uid").get());
+                    ldapUser.setEmail((String) attrs.get("mail").get());
+                    String userPassword = new String((byte[]) attrs.get("userPassword").get());
+                    ldapUser.setPassword(SecureUtil.md5(userPassword));
+                    ldapUser.setAddress((String) attrs.get("postalAddress").get());
+                    ldapUser.setLoginType(LoginType.LDAP);
+                    ldapUser.setPhone((String) attrs.get("mobile").get());
+                    return ldapUser;
+                });
+    }
 
     public UserDto login(UserDto userDTO) {
-        // 用户密码 md5加密
-        userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
-        User dbUser = getUserInfo(userDTO);
+        User dbUser = null;
+        // ldap方式登录
+        if (userDTO.getLdapFlag()) {
+            ContainerCriteria query = LdapQueryBuilder.query()
+                    .where("uid")
+                    .is(userDTO.getUsername())
+                    .and(LdapQueryBuilder.query()
+                            .where("userPassword")
+                            .is(userDTO.getPassword()));
+            List<User> userList = findUserByQuery(query);
+            if (!CollectionUtils.isEmpty(userList)){
+                dbUser = userList.get(0);
+                userDTO.setPassword(dbUser.getPassword());
+                // 校验数据库是否包含此user数据，如果没有则save
+                if (getUserInfo(userDTO) == null) {
+                    UserService userService = applicationContext.getBean(UserService.class);
+                    // 默认普通用户角色
+                    dbUser.setRole(RoleEnum.ROLE_USER.toString());
+                    dbUser.setRoleId(RoleEnum.ROLE_USER.getId());
+                    userService.saveOrUpdate(dbUser);
+                    userService.saveUser(dbUser);
+                }
+            }
+        }else {
+            // 用户密码 md5加密
+            userDTO.setPassword(SecureUtil.md5(userDTO.getPassword()));
+            dbUser = getUserInfo(userDTO);
+        }
         if (dbUser != null) {
             userDTO.setPassword(null);
             // 设置token
@@ -78,7 +127,7 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
         if (one == null) {
             one = new User();
             BeanUtil.copyProperties(userDTO, one, true);
-            // 默认一个普通用户的角色
+            // 默认普通用户角色
             one.setRole(RoleEnum.ROLE_USER.toString());
             one.setRoleId(RoleEnum.ROLE_USER.getId());
             // 把 copy完之后的用户对象存储到数据库
@@ -104,9 +153,14 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
     }
 
     private User getUserInfo(UserDto userDTO) {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username", userDTO.getUsername());
-        queryWrapper.eq("password", userDTO.getPassword());
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUsername, userDTO.getUsername());
+        queryWrapper.eq(User::getPassword, userDTO.getPassword());
+        if (userDTO.getLdapFlag()) {
+            queryWrapper.eq(User::getLoginType, LoginType.LDAP);
+        }else {
+            queryWrapper.eq(User::getLoginType, LoginType.DATABASE);
+        }
         User one;
         try {
             // 从数据库查询用户信息
@@ -151,7 +205,8 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
 
 
     public void deleteBatch(List<Integer> ids) {
-        boolean success = removeByIds(ids);
+        UserService userService = applicationContext.getBean(UserService.class);
+        boolean success = userService.removeByIds(ids);
         if (success) {
             for (Integer id : ids) {
                 cacheManager.getCache(CacheConstants.USER_CACHE).evict(id);

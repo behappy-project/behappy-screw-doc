@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.xiaowu</groupId>
         <artifactId>behappy-screw-doc</artifactId>
-        <version>1.0.0</version>
+        <version>v2.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>screw</artifactId>
@@ -30,6 +30,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-ldap</artifactId>
         </dependency>
     </dependencies>
 

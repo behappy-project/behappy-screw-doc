@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.xiaowu</groupId>
     <artifactId>behappy-screw-doc</artifactId>
-    <version>1.0.0</version>
+    <version>v2.1.0</version>
     <name>behappy-screw-doc</name>
     <packaging>pom</packaging>
     <description>behappy-screw-doc,数据库文档管理</description>
@@ -174,14 +174,25 @@
 
     <profiles>
         <profile>
-            <id>local</id>
+            <id>dev</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>dev</profiles.active>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>master</id>
             <properties>
                 <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>master</profiles.active>
             </properties>
             <activation>
                 <!-- 默认环境 -->
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
         </profile>
     </profiles>

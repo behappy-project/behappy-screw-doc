@@ -31,5 +31,6 @@ public interface CommonConstant {
     String CLICKHOUSE_DRIVER = "ru.yandex.clickhouse.ClickHouseDriver";
     /*-----------定义driver class常量-----------*/
 
+    String DEFAULT_PASS = "123456";
 
 }

@@ -2,6 +2,7 @@ package org.xiaowu.behappy.screw.config;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
 public class Initializer implements CommandLineRunner {
 
     private final static String DATASTORE_BASE = "screw_doc";
+    private final static String DATASTORE_HOST = "127.0.0.1";
+    private final static String DATASTORE_PORT = "3306";
+    private final static String DATASTORE_USER = "root";
+    private final static String DATASTORE_PASS = "root";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -89,17 +94,19 @@ public class Initializer implements CommandLineRunner {
             (
                 id          int auto_increment comment 'id'
                     primary key,
-                username    varchar(50)                         null comment '用户名',
-                password    varchar(50)                         null comment '密码',
-                email       varchar(50)                         null comment '邮箱',
-                phone       varchar(20)                         null comment '电话',
-                address     varchar(255)                        null comment '地址',
-                create_time datetime default current_timestamp null comment '创建时间',
-                avatar_url  varchar(255)                        null comment '头像',
-                role        varchar(50)                         null comment '角色flag',
-                role_id     int                                 null comment '供缓存查询'
-            )
-                collate = utf8mb4_unicode_ci;
+                username    varchar(50)                        not null comment '用户名',
+                password    varchar(50)                        not null comment '密码',
+                email       varchar(50)                        null comment '邮箱',
+                phone       varchar(20)                        null comment '电话',
+                address     varchar(255)                       null comment '地址',
+                create_time datetime default CURRENT_TIMESTAMP null comment '创建时间',
+                avatar_url  varchar(255)                       null comment '头像',
+                role        varchar(50)                        null comment '角色flag',
+                role_id     int                                null comment '供缓存查询',
+                login_type  int      default 0                 not null comment '登录类型',
+                constraint username
+                    unique (username)
+            );
 """,
             """
 create table if not exists %s.sys_database_history
@@ -139,9 +146,17 @@ create table if not exists %s.sys_database_history
         if (StrUtil.isBlank(datastoreBase)) {
             datastoreBase = DATASTORE_BASE;
         }
-        if (StrUtil.isBlank(mysqlHost) || StrUtil.isBlank(mysqlPort) || StrUtil.isBlank(mysqlUsername) || StrUtil.isBlank(mysqlPassword)) {
-            System.out.println("MYSQL_HOST,MYSQL_PORT,MYSQL_USERNAME,MYSQL_PASSWORD参数必填");
-            System.exit(0);
+        if (StrUtil.isBlank(mysqlHost)) {
+            mysqlHost = DATASTORE_HOST;
+        }
+        if (StrUtil.isBlank(mysqlPort)) {
+            mysqlPort = DATASTORE_PORT;
+        }
+        if (StrUtil.isBlank(mysqlUsername)) {
+            mysqlUsername = DATASTORE_USER;
+        }
+        if (StrUtil.isBlank(mysqlPassword)) {
+            mysqlPassword = DATASTORE_PASS;
         }
         String initDatabaseSql = INIT_DATABASE.replaceAll("%s", datastoreBase);
         boolean success = JDBCUtils.initDatabase(initDatabaseSql, mysqlHost, Integer.parseInt(mysqlPort), mysqlUsername, mysqlPassword);

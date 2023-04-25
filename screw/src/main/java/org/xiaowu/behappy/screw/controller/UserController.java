@@ -2,6 +2,7 @@ package org.xiaowu.behappy.screw.controller;
 
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,9 @@ import org.xiaowu.behappy.screw.service.UserService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static org.xiaowu.behappy.screw.common.core.constant.CommonConstant.DEFAULT_PASS;
 
 
 @RestController
@@ -48,6 +52,12 @@ public class UserController {
     // 新增或者更新
     @PostMapping
     public Result save(@RequestBody User user) {
+        // 新增用户操作
+        if (Objects.isNull(user.getId())){
+            // 用户密码 md5加密
+            user.setPassword(SecureUtil.md5(DEFAULT_PASS));
+        }
+        userService.saveOrUpdate(user);
         return Result.success(userService.saveUser(user));
     }
 
