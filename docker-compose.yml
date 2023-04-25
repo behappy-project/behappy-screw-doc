@@ -12,6 +12,11 @@ services:
       # REDIS_HOST: 127.0.0.1
       # REDIS_PORT: 9000
       # REDIS_PASSWORD: redis
+      # LDAP配置，如需要请配置
+      # LDAP_URL: ldap://127.0.0.1:389
+      # LDAP_BASE: dc=extension,dc=net
+      # LDAP_USERNAME: cn=admin,dc=extension,dc=net
+      # LDAP_PASSWORD: 123456
       # 服务本身数据持久化（mysql）
       DATASTORE_BASE: screw_doc
       MYSQL_HOST: 127.0.0.1
