@@ -21,9 +21,10 @@ public class Datasource implements Serializable {
     private Integer id;
 
     /**
+     * @see DataSourceEnum
      * 数据源类型
      */
-    private DataSourceEnum dataSource;
+    private String dataSource;
 
     /**
      * 数据源名称(唯一)

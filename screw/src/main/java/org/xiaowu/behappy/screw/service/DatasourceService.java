@@ -30,7 +30,7 @@ public class DatasourceService extends ServiceImpl<DatasourceMapper, Datasource>
 
     public List<Datasource> findAllByOp(DataSourceEnum datasource, String name) {
         LambdaQueryWrapper<Datasource> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Objects.nonNull(datasource), Datasource::getDataSource, datasource);
+        wrapper.eq(Objects.nonNull(datasource), Datasource::getDataSource, datasource.name());
         wrapper.like(StrUtil.isNotEmpty(name), Datasource::getName, name);
         return list(wrapper);
     }
@@ -56,9 +56,9 @@ public class DatasourceService extends ServiceImpl<DatasourceMapper, Datasource>
         Datasource dbDatasource = getOne(new LambdaQueryWrapper<Datasource>()
                 .eq(Datasource::getName, name));
         String databaseType = "";
-        if (dbDatasource.getDataSource().equals(DataSourceEnum.MYSQL)) {
+        if (dbDatasource.getDataSource().equals(DataSourceEnum.MYSQL.name())) {
             databaseType = "0";
-        } else if (dbDatasource.getDataSource().equals(DataSourceEnum.CLICK_HOUSE)) {
+        } else if (dbDatasource.getDataSource().equals(DataSourceEnum.CLICK_HOUSE.name())) {
             databaseType = "1";
         }
         List<String> allDbNames = JDBCUtils.getAllDbNames(databaseType, dbDatasource.getAddr(), dbDatasource.getPort(), dbDatasource.getUsername(), dbDatasource.getPassword());
