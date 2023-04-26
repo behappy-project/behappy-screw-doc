@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.xiaowu</groupId>
         <artifactId>behappy-screw-doc</artifactId>
-        <version>v2.1.0</version>
+        <version>v2.1.1</version>
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
     <artifactId>screw-common</artifactId>
