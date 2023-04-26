@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <div style="margin: 10px 20px; font-size: 14px;">Version: {{version}}</div>
     <div style="margin: 100px auto; background-color: #fff; width: 350px; height: 400px; padding: 20px; border-radius: 10px">
       <div style="margin: 20px 0; text-align: center; font-size: 24px"><b>注 册</b></div>
       <el-form :model="user" :rules="rules" ref="userForm">
@@ -22,10 +23,12 @@
 </template>
 
 <script>
+import {version} from "../../public/config";
 export default {
   name: "Login",
   data() {
     return {
+      version,
       user: {},
       rules: {
         username: [

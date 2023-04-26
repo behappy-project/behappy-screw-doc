@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div style="margin: 10px 20px; font-size: 14px;">Version: v2.1.0</div>
+    <div style="margin: 10px 20px; font-size: 14px;">Version: {{version}}</div>
     <div
         style="margin: 200px auto; background-color: #fff; width: 350px; height: 300px; padding: 20px; border-radius: 10px">
       <div style="margin: 20px 0; text-align: center; font-size: 24px"><b>登 录</b></div>
@@ -23,11 +23,12 @@
 </template>
 
 <script>
-
+import {version} from "../../public/config";
 export default {
   name: "Login",
   data() {
     return {
+      version,
       user: {},
       rules: {
         username: [

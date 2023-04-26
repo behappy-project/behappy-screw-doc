@@ -93,7 +93,6 @@ public class UserService extends ServiceImpl<UserMapper, User> implements IServi
                     // 校验数据库是否包含此user数据，如果没有则save
                     LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
                     queryWrapper.eq(User::getUsername, userDTO.getUsername());
-                    queryWrapper.eq(User::getLoginType, LoginType.LDAP);
                     User userInfo = getUserInfo(queryWrapper);
                     if (userInfo == null) {
                         dbUser = userList.get(0);

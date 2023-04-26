@@ -85,6 +85,11 @@
         <el-form-item label="地址">
           <el-input v-model="form.address" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="登录类型">
+            <el-select clearable v-model="form.loginType" placeholder="请选择登录类型" style="width: 100%">
+                <el-option v-for="(item,index) in loginTypes" :key="index" :label="item.val" :value="item.val"></el-option>
+            </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -113,6 +118,14 @@ export default {
       dialogFormVisible: false,
       multipleSelection: [],
       roles: [],
+      loginTypes: [
+          {
+              val: "LDAP"
+          },
+          {
+              val: "DATABASE"
+          },
+      ],
       user: JSON.parse(localStorage.getItem("user"))
     }
   },
