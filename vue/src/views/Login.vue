@@ -1,8 +1,7 @@
 <template>
   <div class="wrapper">
     <div style="margin: 10px 20px; font-size: 14px;">Version: {{version}}</div>
-    <div
-        style="margin: 200px auto; background-color: #fff; width: 350px; height: 300px; padding: 20px; border-radius: 10px">
+    <div style="margin: 200px auto; background-color: #fff; width: 350px; height: 380px; padding: 20px; border-radius: 10px">
       <div style="margin: 20px 0; text-align: center; font-size: 24px"><b>登 录</b></div>
       <el-form :model="user" :rules="rules" ref="userForm">
         <el-form-item prop="username">
@@ -12,10 +11,14 @@
           <el-input size="medium" style="margin: 10px 0" prefix-icon="el-icon-lock" show-password
                     v-model="user.password"></el-input>
         </el-form-item>
-        <el-form-item style="margin: 10px 0; display: flex; align-items: center; justify-content: space-between;">
-            <el-checkbox v-model="user.ldapFlag" style="margin-right: 120px;">LDAP</el-checkbox>
-            <el-button type="warning" size="small" autocomplete="off" @click="$router.push('/register')">注册</el-button>
-            <el-button type="primary" size="small" autocomplete="off" @click="login">登录</el-button>
+        <el-form-item>
+            <el-checkbox v-model="user.ldapFlag" style="margin-right: 190px;">LDAP</el-checkbox>
+        </el-form-item>
+        <el-form-item>
+            <el-button v-if="registerEnable" type="warning" size="small" style="width: 100%" autocomplete="off" @click="$router.push('/register')">注册</el-button>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" size="small" style="width: 100%" autocomplete="off" @click="login">登录</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -29,6 +32,7 @@ export default {
   data() {
     return {
       version,
+      registerEnable: true,
       user: {},
       rules: {
         username: [
@@ -41,6 +45,11 @@ export default {
         ],
       }
     }
+  },
+  async mounted() {
+      //  是否开启注册
+      const res = await this.request.get('/user/register-enable')
+      this.registerEnable = res.data
   },
   methods: {
     login() {

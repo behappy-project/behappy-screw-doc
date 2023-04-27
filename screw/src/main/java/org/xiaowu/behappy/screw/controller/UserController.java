@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.xiaowu.behappy.screw.common.core.constant.CommonConstant.DEFAULT_PASS;
+import static org.xiaowu.behappy.screw.common.core.constant.CommonConstant.REGISTER_ENABLE;
 
 
 @RestController
@@ -27,6 +28,15 @@ import static org.xiaowu.behappy.screw.common.core.constant.CommonConstant.DEFAU
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping("/register-enable")
+    public Result registerEnable() {
+        String registerEnable = System.getenv(REGISTER_ENABLE);
+        if (StrUtil.isEmpty(registerEnable)){
+            return Result.success(Boolean.TRUE);
+        }
+        return Result.success(Boolean.valueOf(registerEnable));
+    }
 
     @PostMapping("/register")
     public Result register(@RequestBody UserDto userDTO) {

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.xiaowu</groupId>
         <artifactId>screw-common</artifactId>
-        <version>v2.1.1</version>
+        <version>v2.1.2</version>
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
     <artifactId>screw-common-core</artifactId>

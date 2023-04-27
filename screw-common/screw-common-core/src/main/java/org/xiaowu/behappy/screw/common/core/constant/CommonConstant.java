@@ -33,4 +33,6 @@ public interface CommonConstant {
 
     String DEFAULT_PASS = "123456";
 
+    String REGISTER_ENABLE = "REGISTER_ENABLE";
+
 }
