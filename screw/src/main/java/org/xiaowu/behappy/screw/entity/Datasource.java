@@ -1,12 +1,12 @@
 package org.xiaowu.behappy.screw.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.enums.DataSourceEnum;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 数据源配置
@@ -15,9 +15,10 @@ import java.io.Serializable;
 @Data
 @TableName("sys_datasource")
 public class Datasource implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1189321493167790278L;
 
-    @TableId(type = IdType.AUTO,value = "id")
+    @TableId(type = IdType.AUTO, value = "id")
     private Integer id;
 
     /**
@@ -67,4 +68,16 @@ public class Datasource implements Serializable {
      */
     private String ignoreSuffix;
     /*------------逗号分割------------*/
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
 }

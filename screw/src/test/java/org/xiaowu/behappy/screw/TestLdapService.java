@@ -4,16 +4,13 @@ import cn.hutool.crypto.SecureUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
-import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.EqualsFilter;
 import org.springframework.ldap.query.ContainerCriteria;
 import org.springframework.ldap.query.LdapQueryBuilder;
 import org.springframework.stereotype.Service;
-import org.xiaowu.behappy.screw.entity.LdapUser;
 import org.xiaowu.behappy.screw.entity.User;
-import org.xiaowu.behappy.screw.repository.LdapUserRepository;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
@@ -28,15 +25,10 @@ import java.util.List;
 @Service
 public class TestLdapService {
 
-    @Autowired
-    private LdapUserRepository ldapUserRepository;
 
     @Autowired
     private LdapTemplate ldapTemplate;
 
-    public void findAll() {
-        ldapUserRepository.findAll().forEach(System.out::println);
-    }
 
     public void findUserByUid(String uid) {
         ContainerCriteria query = LdapQueryBuilder.query()

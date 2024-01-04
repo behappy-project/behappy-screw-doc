@@ -1,14 +1,11 @@
 package org.xiaowu.behappy.screw.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author xiaowu
@@ -18,9 +15,10 @@ import java.util.List;
 @TableName("sys_database_history")
 public class DatabaseHistory implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8707481230849814827L;
 
-    @TableId(value = "history_id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     /**
@@ -46,6 +44,13 @@ public class DatabaseHistory implements Serializable {
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
 
 }

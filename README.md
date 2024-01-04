@@ -1,6 +1,5 @@
 > 欢迎“一键三连[watch,fork,star]”
-> 
-> 如果有对该项目感兴趣的小伙伴，可以联系我，大家一起研究
+
 ## 技术沟通群
 <img src="https://raw.githubusercontent.com/wang-xiaowu/picture_repository/master/behappy_group.jpg" width="300px">
 
@@ -89,13 +88,3 @@ http://xxx:8999/
 - [X]  数据更改后,可进行历史回溯
 - [X]  手动初始化数据库数据改为自动初始化
 - [X]  支持ldap登录
-
-### 注: 当前项目支持两种数据库, mysql和clickhouse, 但clickhouse因为screw原作者还未合代码, 所以如果是需要本地开发的话, 需要手动执行下此命令将jar包安装到本地库
-
-```xml
-参考: https://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html
-
-mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-1.0.6-SNAPSHOT.pom"
-cp lib/screw-core-1.0.6-SNAPSHOT.pom ~/.m2/repository/cn/smallbun/screw/screw/1.0.6-SNAPSHOT/screw-1.0.6-SNAPSHOT.pom
-mvn org.apache.maven.plugins:maven-install-plugin:2.5.2:install-file -Dfile="lib/screw-core-1.0.6-SNAPSHOT.jar" -DpomFile="lib/screw-core-1.0.6-SNAPSHOT.pom"
-```

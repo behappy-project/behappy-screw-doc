@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.xiaowu</groupId>
     <artifactId>behappy-screw-doc</artifactId>
-    <version>v2.1.2</version>
+    <version>v3.0.1</version>
     <name>behappy-screw-doc</name>
     <packaging>pom</packaging>
     <description>behappy-screw-doc,数据库文档管理</description>
@@ -15,16 +15,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-        <mybatis-plus.version>3.5.1</mybatis-plus.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
         <screw.version>1.0.6-SNAPSHOT</screw.version>
         <jsonwebtoken.version>0.9.1</jsonwebtoken.version>
-        <hutool.version>5.7.20</hutool.version>
-        <spring-boot.version>2.6.7</spring-boot.version>
+        <hutool.version>5.8.24</hutool.version>
+        <spring-boot.version>3.2.1</spring-boot.version>
         <clickhouse.version>0.3.1</clickhouse.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
     </properties>
     <modules>
         <module>screw</module>
-        <module>screw-common</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -35,27 +35,6 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.xiaowu</groupId>
-                <artifactId>screw-common-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xiaowu</groupId>
-                <artifactId>screw-common-db</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.xiaowu</groupId>
-                <artifactId>screw-common-cache</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <!-- hutool  -->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
             </dependency>
             <!--jwt-->
             <dependency>
@@ -72,7 +51,7 @@
             <!--mybatis-->
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <!--mybatis plus extension,包含了mybatis plus core-->
@@ -81,14 +60,48 @@
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+            <!-- hutool  -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-crypto</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-core</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-json</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- hutool  -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+            <!--clickhouse-->
+            <dependency>
+                <groupId>ru.yandex.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>${clickhouse.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
-        <!--解决高于jdk8环境产生的问题：java.lang.NoClassDefFoundError: javax/xml/bind/DatatypeConverter-->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -103,8 +116,21 @@
         <!-- hutool  -->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
+            <artifactId>hutool-crypto</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-extra</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-json</artifactId>
+        </dependency>
+        <!-- hutool  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -133,18 +159,6 @@
                     <include>static/favicon.ico</include>
                 </includes>
             </resource>
-            <!--删除system导入jar, 此方式会导致依赖传递中断-->
-            <!--<resource>
-                <directory>${project.basedir}/lib</directory>
-                <targetPath>BOOT-INF/lib/</targetPath>
-                <includes>
-                    <include>**/*.jar</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <targetPath>BOOT-INF/classes/</targetPath>
-            </resource>-->
         </resources>
         <pluginManagement>
             <plugins>
@@ -176,22 +190,18 @@
         <profile>
             <id>dev</id>
             <properties>
-                <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>dev</profiles.active>
             </properties>
             <activation>
-                <!-- 默认环境 -->
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
         <profile>
             <id>master</id>
             <properties>
-                <!-- 环境标识，需要与配置文件的名称相对应 -->
                 <profiles.active>master</profiles.active>
             </properties>
             <activation>
-                <!-- 默认环境 -->
                 <activeByDefault>false</activeByDefault>
             </activation>
         </profile>

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @EnableAsync
-@SpringBootApplication(scanBasePackages = "org.xiaowu.behappy.screw.*")
+@SpringBootApplication(scanBasePackages = "org.xiaowu.behappy.screw")
 public class ScrewApplication {
     public static void main(String[] args) {
         SpringApplication.run(ScrewApplication.class, args);

@@ -2,7 +2,9 @@ package org.xiaowu.behappy.screw.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
+import org.xiaowu.behappy.screw.enums.LoginType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,7 +14,9 @@ import java.util.Date;
 @Data
 @TableName("sys_user")
 public class User implements Serializable {
+    @Serial
     private static final long serialVersionUID = 600215195546603137L;
+
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
@@ -26,11 +30,9 @@ public class User implements Serializable {
 
     private String address;
 
-    @TableField(fill = FieldFill.INSERT)
-    private Date createTime;
-
     private String avatarUrl;
 
+    @TableField(value = "role_flag")
     private String role;
 
     private Integer roleId;
@@ -39,4 +41,16 @@ public class User implements Serializable {
      * @see LoginType
      */
     private LoginType loginType;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private Date updateTime;
+
+    /**
+     * 创建时间
+     */
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime;
 }

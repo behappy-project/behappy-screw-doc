@@ -100,13 +100,11 @@
 </template>
 
 <script>
-import {serverIp} from "../../public/config";
 
 export default {
   name: "User",
   data() {
     return {
-      serverIp: serverIp,
       tableData: [],
       total: 0,
       pageNum: 1,

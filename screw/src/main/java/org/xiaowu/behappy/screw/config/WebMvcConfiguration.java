@@ -6,6 +6,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.xiaowu.behappy.screw.interceptor.JwtInterceptor;
 
 import java.io.File;
 import java.util.Arrays;
@@ -23,20 +24,25 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     private static final List<String> EXCLUDE_PATH = Arrays.asList(
             "/",
             "/index.html",
+            "/favicon.ico",
+            "/js/**",
+            "/css/**",
+            "/fonts/**",
+            "/img/**",
             "/error",
             "/error/**",
-            "/favicon.ico",
-            "/user/login",
-            "/user/register",
-            "/user/register-enable",
-            "/js/**", "/css/**",
-            "/fonts/**","/img/**");
+            "/api/user/login",
+            "/api/user/register",
+            "/api/user/register-enable"
+    );
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .addPathPatterns("/**")  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
-                .excludePathPatterns(EXCLUDE_PATH);  // 放行一些资源
+                // 拦截所有请求，通过判断token是否合法来决定是否需要登录
+                .addPathPatterns("/**")
+                // 放行一些资源
+                .excludePathPatterns(EXCLUDE_PATH);
     }
 
     @Override

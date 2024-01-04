@@ -1,7 +1,7 @@
 package org.xiaowu.behappy.screw.dto;
 
 import lombok.Data;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.enums.DataSourceEnum;
 
 /**
  * 根据数据源和角色查询数据库

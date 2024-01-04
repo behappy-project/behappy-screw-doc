@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
 import org.xiaowu.behappy.screw.entity.User;
 
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootTest

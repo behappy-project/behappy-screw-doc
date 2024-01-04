@@ -6,49 +6,54 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
-import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.xiaowu.behappy.screw.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.util.Result;
 import org.xiaowu.behappy.screw.dto.ScrewSchemaDto;
 import org.xiaowu.behappy.screw.entity.Database;
-import org.xiaowu.behappy.screw.service.DatabaseHistoryService;
-import org.xiaowu.behappy.screw.service.DatabaseService;
+import org.xiaowu.behappy.screw.service.DatabaseHistoryServiceImpl;
+import org.xiaowu.behappy.screw.service.DatabaseServiceImpl;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
-@RequestMapping("/database")
+@RequestMapping("/api/database")
 @AllArgsConstructor
 public class DatabaseController {
 
-    private final DatabaseService databaseService;
+    private final DatabaseServiceImpl databaseServiceImpl;
 
-    private final DatabaseHistoryService databaseHistoryService;
+    private final DatabaseHistoryServiceImpl databaseHistoryServiceImpl;
 
-    // 新增或者更新
+    /**
+     * 新增或者更新
+     * @param database
+     * @return
+     */
     @PostMapping
     public Result save(@RequestBody Database database) {
         if (StrUtil.isBlank(database.getSortNum())) {
             database.setSortNum("999");
         }
-        databaseService.saveOrUpdate(database);
+        databaseServiceImpl.saveOrUpdate(database);
         return Result.success();
     }
 
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
-        databaseService.delete(id);
+        databaseServiceImpl.delete(id);
         return Result.success();
     }
 
     @PostMapping("/del/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        databaseService.removeByIds(ids);
+        databaseServiceImpl.removeByIds(ids);
         return Result.success();
     }
 
     @GetMapping("/ids")
     public Result findAllIds() {
-        return Result.success(databaseService.list().stream().map(Database::getId));
+        return Result.success(databaseServiceImpl.list().stream().map(Database::getId));
     }
 
     /**
@@ -58,12 +63,12 @@ public class DatabaseController {
      */
     @GetMapping
     public Result findAll(@RequestParam(defaultValue = "") String name) {
-        return Result.success(databaseService.findDbs(name));
+        return Result.success(databaseServiceImpl.findDbs(name));
     }
 
     @GetMapping("/{id}")
     public Result findOne(@PathVariable Integer id) {
-        return Result.success(databaseService.getById(id));
+        return Result.success(databaseServiceImpl.getById(id));
     }
 
     @GetMapping("/page")
@@ -73,7 +78,7 @@ public class DatabaseController {
         QueryWrapper<Database> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("name", name);
         queryWrapper.orderByDesc("id");
-        return Result.success(databaseService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        return Result.success(databaseServiceImpl.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
     /**
@@ -83,7 +88,7 @@ public class DatabaseController {
      */
     @PostMapping("/schemas")
     public Result allSchemas(@RequestBody ScrewSchemaDto screwSchemaDto) {
-        Page<Database> list = databaseService.allSchemas(screwSchemaDto);
+        Page<Database> list = databaseServiceImpl.allSchemas(screwSchemaDto);
         return Result.success(list);
     }
 
@@ -104,7 +109,7 @@ public class DatabaseController {
     @GetMapping("/history/{databaseId}/{pageSize}")
     public Result history(@PathVariable Integer databaseId,
                           @PathVariable Integer pageSize) {
-        return databaseHistoryService.history(databaseId,pageSize);
+        return databaseHistoryServiceImpl.history(databaseId,pageSize);
     }
 
 }

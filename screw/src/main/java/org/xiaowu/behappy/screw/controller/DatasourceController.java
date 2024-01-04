@@ -1,26 +1,26 @@
 package org.xiaowu.behappy.screw.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
-import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.xiaowu.behappy.screw.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.util.Result;
 import org.xiaowu.behappy.screw.dto.CheckConnDto;
 import org.xiaowu.behappy.screw.entity.Datasource;
-import org.xiaowu.behappy.screw.service.DatasourceService;
+import org.xiaowu.behappy.screw.service.DatasourceServiceImpl;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
  * @author 94391
  */
 @RestController
-@RequestMapping("/datasource")
+@RequestMapping("/api/datasource")
 @AllArgsConstructor
 public class DatasourceController {
 
-    private final DatasourceService datasourceService;
+    private final DatasourceServiceImpl datasourceServiceImpl;
 
     /**
      * 新增或者更新
@@ -29,7 +29,7 @@ public class DatasourceController {
      */
     @PostMapping
     public Result saveOrUpdate(@RequestBody Datasource datasource) {
-        return Result.success(datasourceService.saveOrUpdate(datasource));
+        return Result.success(datasourceServiceImpl.saveOrUpdate(datasource));
     }
 
 
@@ -39,7 +39,7 @@ public class DatasourceController {
      */
     @DeleteMapping("/{id}")
     public Result del(@PathVariable Integer id) {
-        return datasourceService.del(id);
+        return datasourceServiceImpl.del(id);
     }
 
 
@@ -50,7 +50,7 @@ public class DatasourceController {
     @GetMapping
     public Result findAllByOp(@RequestParam(value = "dataSource",required = false) DataSourceEnum dataSource,
                               @RequestParam(value = "name",required = false) String name) {
-        List<Datasource> datasources = datasourceService.findAllByOp(dataSource, name);
+        List<Datasource> datasources = datasourceServiceImpl.findAllByOp(dataSource, name);
         return Result.success(datasources);
     }
 
@@ -61,7 +61,7 @@ public class DatasourceController {
      */
     @GetMapping("/{id}")
     public Result findById(@PathVariable Integer id) {
-        return Result.success(datasourceService.getById(id));
+        return Result.success(datasourceServiceImpl.getById(id));
     }
 
 
@@ -71,7 +71,7 @@ public class DatasourceController {
      */
     @PostMapping("/check-conn")
     public Result checkConn(@Valid @RequestBody CheckConnDto checkConnDto) {
-        boolean success = datasourceService.checkConn(checkConnDto);
+        boolean success = datasourceServiceImpl.checkConn(checkConnDto);
         return Result.success(success);
     }
 
@@ -82,7 +82,7 @@ public class DatasourceController {
      */
     @GetMapping("/ds-name")
     public Result findAllDsName() {
-        List<String> dsNames = datasourceService.findAllDsName();
+        List<String> dsNames = datasourceServiceImpl.findAllDsName();
         return Result.success(dsNames);
     }
 
@@ -94,7 +94,7 @@ public class DatasourceController {
     @GetMapping("/sync")
     public Result syncDs(@RequestParam String name,
                          @RequestParam Integer pid) {
-        datasourceService.syncDs(name, pid);
+        datasourceServiceImpl.syncDs(name, pid);
         return Result.success();
     }
 

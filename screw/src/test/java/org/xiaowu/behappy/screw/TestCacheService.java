@@ -7,7 +7,7 @@ import org.xiaowu.behappy.screw.common.cache.constants.CacheConstants;
 import org.xiaowu.behappy.screw.entity.User;
 
 /**
- * 测试cache 咖啡因
+ * 测试cache
  * @author xiaowu
  */
 @Service

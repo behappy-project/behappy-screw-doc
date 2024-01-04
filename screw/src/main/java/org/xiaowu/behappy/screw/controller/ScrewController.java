@@ -1,21 +1,24 @@
 package org.xiaowu.behappy.screw.controller;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.xiaowu.behappy.screw.util.Result;
 import org.xiaowu.behappy.screw.dto.ScrewContextLoadDto;
 import org.xiaowu.behappy.screw.dto.UpdateDocDto;
 import org.xiaowu.behappy.screw.factory.ScrewContextLoadService;
 import org.xiaowu.behappy.screw.factory.ScrewFactory;
 
-import javax.validation.Valid;
 
 
 /**
  * @author xiaowu
  */
 @RestController
-@RequestMapping("/screw")
+@RequestMapping("/api/screw")
 @AllArgsConstructor
 public class ScrewController {
 

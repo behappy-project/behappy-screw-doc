@@ -5,48 +5,51 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.xiaowu.behappy.screw.common.core.util.Result;
+import org.xiaowu.behappy.screw.util.Result;
 import org.xiaowu.behappy.screw.entity.Role;
-import org.xiaowu.behappy.screw.service.RoleService;
+import org.xiaowu.behappy.screw.service.RoleServiceImpl;
 
 import java.util.Collections;
 import java.util.List;
 
 
+/**
+ * @author xiaowu
+ */
 @RestController
-@RequestMapping("/role")
+@RequestMapping("/api/role")
 @AllArgsConstructor
 public class RoleController {
 
-    private final RoleService roleService;
+    private final RoleServiceImpl roleServiceImpl;
 
     // 新增或者更新
     @PostMapping
     public Result save(@RequestBody Role role) {
-        roleService.saveRole(role);
+        roleServiceImpl.saveRole(role);
         return Result.success();
     }
 
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
-        roleService.deleteBatch(Collections.singletonList(id));
+        roleServiceImpl.deleteBatch(Collections.singletonList(id));
         return Result.success();
     }
 
     @PostMapping("/del/batch")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        roleService.deleteBatch(ids);
+        roleServiceImpl.deleteBatch(ids);
         return Result.success();
     }
 
     @GetMapping
     public Result findAll() {
-        return Result.success(roleService.list());
+        return Result.success(roleServiceImpl.list());
     }
 
     @GetMapping("/{id}")
     public Result findOne(@PathVariable Integer id) {
-        return Result.success(roleService.getById(id));
+        return Result.success(roleServiceImpl.getById(id));
     }
 
     @GetMapping("/page")
@@ -56,7 +59,7 @@ public class RoleController {
         QueryWrapper<Role> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("name", name);
         queryWrapper.orderByDesc("id");
-        return Result.success(roleService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        return Result.success(roleServiceImpl.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
 
     /**
@@ -67,7 +70,7 @@ public class RoleController {
      */
     @PostMapping("/roleDatabase/{roleId}")
     public Result roleDatabase(@PathVariable Integer roleId, @RequestBody List<Integer> databases) {
-        roleService.setRoleDatabase(roleId, databases);
+        roleServiceImpl.setRoleDatabase(roleId, databases);
         return Result.success();
     }
 
@@ -78,7 +81,7 @@ public class RoleController {
      */
     @GetMapping("/roleDatabase/{roleId}")
     public Result getRoleDatabase(@PathVariable Integer roleId) {
-        return Result.success( roleService.getRoleDatabase(roleId));
+        return Result.success( roleServiceImpl.getRoleDatabase(roleId));
     }
 
 }

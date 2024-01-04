@@ -1,10 +1,10 @@
 package org.xiaowu.behappy.screw.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.enums.DataSourceEnum;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 数据库测试连接

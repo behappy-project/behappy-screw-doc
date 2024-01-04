@@ -1,7 +1,5 @@
 package org.xiaowu.behappy.screw.util;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.text.StrJoiner;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.smallbun.screw.core.Configuration;
@@ -13,8 +11,7 @@ import cn.smallbun.screw.core.process.ProcessConfig;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.experimental.UtilityClass;
-import org.xiaowu.behappy.screw.common.core.config.ScrewProperties;
-import org.xiaowu.behappy.screw.common.core.enums.DataSourceEnum;
+import org.xiaowu.behappy.screw.config.ScrewProperties;
 import org.xiaowu.behappy.screw.entity.Database;
 import org.xiaowu.behappy.screw.entity.Datasource;
 
@@ -70,7 +67,7 @@ public class ScrewUtils {
     }
 
     private ProcessConfig getProcessConfig(Datasource datasource) {
-        ProcessConfig processConfig = ProcessConfig.builder()
+        return ProcessConfig.builder()
                 //指定生成逻辑、当存在指定表、指定表前缀、指定表后缀时，将生成指定表，其余表不生成、并跳过忽略表配置
                 //忽略表名
                 .ignoreTableName(StrUtil.split(datasource.getIgnoreTableName(),","))
@@ -78,7 +75,6 @@ public class ScrewUtils {
                 .ignoreTablePrefix(StrUtil.split(datasource.getIgnorePrefix(),","))
                 //忽略表后缀
                 .ignoreTableSuffix(StrUtil.split(datasource.getIgnoreSuffix(),",")).build();
-        return processConfig;
     }
 
     private DataSource getDataSource(String driver, String url, String username, String password) {
@@ -88,7 +84,7 @@ public class ScrewUtils {
         hikariConfig.setJdbcUrl(url);
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
-        //对于mysql,设置可以获取tables remarks信息
+        //对于mysql,设置此属性可以获取tables remarks信息
         hikariConfig.addDataSourceProperty("useInformationSchema", "true");
         hikariConfig.setMinimumIdle(2);
         hikariConfig.setMaximumPoolSize(5);

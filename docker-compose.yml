@@ -7,13 +7,8 @@ services:
     image: wangxiaowu950330/behappy-screw-doc:latest
     # 自定义环境变量
     environment:
-      # 是否启用注册，默认开启
+      # 是否启用注册(true/false)，默认开启
       REGISTER_ENABLE: true
-      # 缓存方式,默认为caffeine
-      CACHE_TYPE: caffeine
-      # REDIS_HOST: 127.0.0.1
-      # REDIS_PORT: 9000
-      # REDIS_PASSWORD: redis
       # LDAP配置，如需要请配置
       # LDAP_URL: ldap://127.0.0.1:389
       # LDAP_BASE: dc=extension,dc=net
