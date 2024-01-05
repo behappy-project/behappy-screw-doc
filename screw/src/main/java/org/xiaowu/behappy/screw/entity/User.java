@@ -32,6 +32,9 @@ public class User implements Serializable {
 
     private String avatarUrl;
 
+    /**
+     * role_flag, 供展示, unique
+     */
     @TableField(value = "role_flag")
     private String role;
 

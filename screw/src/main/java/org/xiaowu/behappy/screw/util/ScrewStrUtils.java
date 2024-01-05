@@ -11,7 +11,7 @@ public class ScrewStrUtils {
     /**
      * eg:
      * 截取第3个/和第一个?之间的字符串
-     * "jdbc:mysql://gz-cdbrg-hmaqfkgz.sql.tencentcdb.com:61148/information_schema?useUnicode=true"
+     * "jdbc:mysql://xxxx:xxxx/information_schema?useUnicode=true"
      * String originDataBase = ScrewStrUtils.subStr(dataSourceProperty.getUrl(), 3, "/", 1, "?");
      *
      * 截取正数第behindNum个`behindStr`后面,并且在正数第frontNum个`frontStr`之前的内容

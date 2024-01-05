@@ -1,8 +1,6 @@
 server:
   port: 8080
 spring:
-  profiles:
-    active: @profiles.active@
   ldap:
     urls:
       - ${LDAP_URL:ldap://127.0.0.1:389}

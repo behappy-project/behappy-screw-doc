@@ -1,7 +1,7 @@
 version: '3'
 services:
   behappy-screw-doc:
-    restart: 'no'
+    restart: 'always'
     privileged: true
     container_name: behappy-screw-doc
     image: wangxiaowu950330/behappy-screw-doc:latest
@@ -14,7 +14,7 @@ services:
       # LDAP_BASE: dc=extension,dc=net
       # LDAP_USERNAME: cn=admin,dc=extension,dc=net
       # LDAP_PASSWORD: 123456
-      # 服务本身数据持久化（mysql）
+      # 服务本身数据持久化（need mysql）
       DATASTORE_BASE: screw_doc
       MYSQL_HOST: 127.0.0.1
       MYSQL_PORT: 3306

@@ -3,7 +3,7 @@ package org.xiaowu.behappy.screw;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.xiaowu.behappy.screw.common.cache.constants.CacheConstants;
+import org.xiaowu.behappy.screw.constant.CacheConstant;
 import org.xiaowu.behappy.screw.entity.User;
 
 /**
@@ -13,12 +13,12 @@ import org.xiaowu.behappy.screw.entity.User;
 @Service
 public class TestCacheService {
 
-    @CachePut(value = CacheConstants.USER_CACHE,key = "#user.id")
+    @CachePut(value = CacheConstant.USER_CACHE,key = "#user.id")
     public User testCacheUser(User user){
         return user;
     }
 
-    @Cacheable(value = CacheConstants.USER_CACHE,key = "#id")
+    @Cacheable(value = CacheConstant.USER_CACHE,key = "#id")
     public User getCacheUser(Integer id){
         return new User();
     }

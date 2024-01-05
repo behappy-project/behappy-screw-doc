@@ -21,7 +21,7 @@ public class ThreadConfig {
 
     @Primary
     @Bean
-    public ThreadPoolExecutor threadPoolExecutor() {
+    public ThreadPoolExecutor executor() {
         return new ThreadPoolExecutor(
                 CORE_SIZE,
                 MAX_SIZE,

@@ -10,8 +10,12 @@
         <result column="address" property="address" />
         <result column="create_time" property="createTime" />
         <result column="avatar_url" property="avatarUrl" />
-        <result column="role" property="role" />
+        <result column="role_flag" property="role" />
     </resultMap>
+
+    <update id="updatePassword">
+        update sys_user set password = #{newPassword} where username = #{username} and password = #{password}
+    </update>
 
     <select id="findPage" resultMap="pageUser">
         select sys_user.* from sys_user

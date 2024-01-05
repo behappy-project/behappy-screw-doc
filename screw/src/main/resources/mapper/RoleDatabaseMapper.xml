@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.xiaowu.behappy.screw.mapper.RoleDatabaseMapper">
+
+    <resultMap id="roleDatabase" type="org.xiaowu.behappy.screw.entity.RoleDatabase">
+        <result column="roleId" property="roleId" />
+        <result column="databaseId" property="databaseId" />
+    </resultMap>
+
+    <delete id="deleteByRoleId" parameterType="int">
+        delete from sys_role_database where role_id = #{roleId}
+    </delete>
+
+    <select id="selectByRoleId" resultMap="roleDatabase">
+        select database_id from sys_role_database where role_id = #{roleId}
+        and database_id not in
+            (select distinct pid from sys_database where pid = 0)
+    </select>
+</mapper>

@@ -211,6 +211,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IS
 
     public void deleteBatch(List<Integer> ids) {
         UserServiceImpl userServiceImpl = SpringUtil.getBean(UserServiceImpl.class);
-        boolean success = userServiceImpl.removeByIds(ids);
+        userServiceImpl.removeByIds(ids);
     }
 }

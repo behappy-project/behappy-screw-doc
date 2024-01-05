@@ -9,8 +9,4 @@ import org.xiaowu.behappy.screw.entity.Role;
  * @author xiaowu
  */
 public interface RoleMapper extends BaseMapper<Role> {
-
-    @Select("select id from sys_role where flag = #{flag}")
-    Integer selectByFlag(@Param("flag") String flag);
-
 }

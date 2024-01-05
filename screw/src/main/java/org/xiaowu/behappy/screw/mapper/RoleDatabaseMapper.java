@@ -14,11 +14,8 @@ import java.util.List;
 public interface RoleDatabaseMapper extends BaseMapper<RoleDatabase> {
 
 
-    @Delete("delete from sys_role_database where role_id = #{roleId}")
     int deleteByRoleId(@Param("roleId") Integer roleId);
 
-    @Select("select database_id from sys_role_database where role_id = #{roleId}\n" +
-            "and database_id not in (select distinct pid from sys_database where pid is not null)")
     List<Integer> selectByRoleId(@Param("roleId")Integer roleId);
 
 }
